@@ -156,14 +156,14 @@ def flin(theta, x):
 def fun4DFIXNR(theta):
   return flin(theta, np.array(PER)) - np.array(Lr4DFIXNR)
 
-def funP7NR(theta):
-  return flin(theta, np.array(PER)) - np.array(LrP7NR)
+#def funP7NR(theta):
+  #return flin(theta, np.array(PER)) - np.array(LrP7NR)
   
-def funA1L(theta):
-  return flin(theta, np.array(PER)) - np.array(LrA1L)
+#def funA1L(theta):
+  #return flin(theta, np.array(PER)) - np.array(LrA1L)
   
-def funP1(theta):
-  return flin(theta, np.array(PER)) - np.array(LrP1)
+#def funP1(theta):
+  #return flin(theta, np.array(PER)) - np.array(LrP1)
   
 theta0 = [1, 1]
 
