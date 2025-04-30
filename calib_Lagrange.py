@@ -1,0 +1,81 @@
+import crappy
+import pycaso as pcs
+import pattern
+import ft232R #classe InOut pour le Ft232r
+import triggerflow # classes de trigger de l'expérience
+import PolyZernike
+from glob import glob
+import numpy as np
+import cv2
+import data_library as data
+
+
+
+if __name__ == "__main__":
+
+    date = "2025_04_28"
+
+    l_pform = 4   #polynomial degree
+
+    saving_folder = f'./{date}/Lpform_{l_pform}/results_calib/'
+
+
+    # Define the inputs
+    calibration_dict = {
+      'cam1_folder' : f'./{date}/r',
+      'cam2_folder' : f'./{date}/l',
+      'name' : 'calibration',
+      'saving_folder' : saving_folder,
+      'ncx' : 12,
+      'ncy' : 12,
+      'sqr' : 7.5}  #in mm
+
+    DIC_dict={
+      'cam1_folder':f'./{date}/r',
+      'cam2_folder':f'./{date}/l',
+      'name':'identification',
+      'saving_folder': saving_folder,
+      'window':[[300,1700],[300,1700]]}
+
+
+    # Create the list of z plans
+    x3_list = []
+    for i in range(21) :
+      x3_list.append(120 -5*i)
+    x3_list=np.array(x3_list)
+
+    print('')
+    print(date)
+    print('#####       ')
+    print('Lagrange method - Start calibration')
+    print('#####       ')
+
+
+
+
+##ROTATE_180 dans le cas où les images des deux caméras sont inversées.
+    #Liste_image  = sorted(glob(f'./{date}/r/'+"0*")) #list of image
+    #for image in Liste_image:
+      #img=cv2.imread(image)
+      #img=cv2.rotate(img,cv2.ROTATE_180)
+      #cv2.imwrite(image,img)
+
+    L_constants, Mag = pcs.Lagrange_calibration(z_list = x3_list,
+                                                Lagrange_pform = l_pform,
+                                                plotting = False,
+                                                iterations = 10,
+                                                **calibration_dict)
+
+    np.save(saving_folder+'L_constants.npy', L_constants)
+
+
+    X1,X2 = data.DIC_get_positions(DIC_dict)
+
+    Lagrange_results = pcs.Lagrange_identification(X1[0],
+                                                   X2[0],
+                                                   L_constants,
+                                                   l_pform)
+
+    np.save(f'./{date}/Lpform_{l_pform}/results_calib/Lagrange_results.npy', Lagrange_results)
+    print(Lagrange_results)
+
