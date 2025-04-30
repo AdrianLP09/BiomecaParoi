@@ -8,10 +8,23 @@ from scipy.optimize import least_squares
 date = '2025_04_28'
 sili = 'SC_37_40'
 tricot = '4DFIXNR'
+nZ = 9
+l_pform = 3
+method_dict = {'Zernike','Lagrange','Soloff'}
+method = input('Choose a method\n')
+if not method in method_dict:
+   raise AssertionError('Wrong method, choose among ' + str(method_dict))
 
-X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/results_id/Lx3d.npy', delimiter=' ')
-Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/results_id/Ly3d.npy', delimiter=' ')
-Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/results_id/Lz3d.npy', delimiter=' ')
+if method == 'Lagrange':
+   polform = f'Lpform_{l_pform}'
+
+if method == 'Zernike':
+   polform = f'nZ_{nZ}'
+
+
+X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Lx3d.npy', delimiter=' ')
+Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Ly3d.npy', delimiter=' ')
+Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Lz3d.npy', delimiter=' ')
 
 
 #Création du maillage

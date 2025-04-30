@@ -4,6 +4,22 @@ from scipy.interpolate import Rbf
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
 
+date = '2025_04_28'
+sili = 'SC_37_40'
+tricot = '4DFIXNR'
+nZ = 9
+l_pform = 3
+method_dict = {'Zernike','Lagrange','Soloff'}
+method = input('Choose a method\n')
+if not method in method_dict:
+   raise AssertionError('Wrong method, choose among ' + str(method_dict))
+
+if method == 'Lagrange':
+   polform = f'Lpform_{l_pform}'
+
+if method == 'Zernike':
+   polform = f'nZ_{nZ}'
+
 
 def fit_ellipse(x, y):
     D1 = np.vstack([x**2, x*y, y**2]).T
@@ -20,9 +36,6 @@ def fit_ellipse(x, y):
     ak = eigvec[:, np.nonzero(con > 0)[0]]
     return np.concatenate((ak, T @ ak)).ravel()
 
-date = '2025_04_28'
-sili = 'SC_37_40'
-tricot = '4DFIXNR'
 
 ##Pour P = 245 mbar (ip correspond à l'image à cette pression)
 
@@ -43,9 +56,9 @@ if tricot == 'P7R':
   ip = 0
 
 ip = -2
-X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/results_id/Lx3d.npy', delimiter=' ')[:ip+1]
-Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/results_id/Ly3d.npy', delimiter=' ')[:ip+1]
-Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/results_id/Lz3d.npy', delimiter=' ')[:ip+1]
+X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Lx3d.npy', delimiter=' ')[:ip+1]
+Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Ly3d.npy', delimiter=' ')[:ip+1]
+Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Lz3d.npy', delimiter=' ')[:ip+1]
 
 X0min = min(X3d[0])
 X0max = max(X3d[0])
@@ -139,7 +152,7 @@ for per in PER:
 
 plt.scatter(PER, Lr)
 plt.show()
-np.savetxt(f'./{date}/{sili}_{tricot}/L_aniso.txt', Lr)
+np.savetxt(f'./{date}/{sili}_{tricot}/{polform}/L_aniso.txt', Lr)
 
 
 def flin(theta, x):
