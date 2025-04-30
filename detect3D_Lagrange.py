@@ -190,7 +190,7 @@ if __name__ == '__main__' :
 
     date = '2025_04_28'
     sample = 'SC_37_40_4DFIXNR'
-    l_pform = 3
+    l_pform = 4
 
 
     saving_folder=f'./{date}/{sample}/Lpform_{l_pform}/'
@@ -210,7 +210,7 @@ if __name__ == '__main__' :
         #cv2.imwrite(image,img)
 
 
-   all_pxl, all_pyl = CoordCam(f'./{date}/{sample}/video_extenso_left/', 'maskL.tiff')
+    all_pxl, all_pyl = CoordCam(f'./{date}/{sample}/video_extenso_left/', 'maskL.tiff')
     np.save(saving_folder + 'all_pxl.npy', all_pxl)
     np.save(saving_folder + 'all_pyl.npy', all_pyl)
 
@@ -218,10 +218,10 @@ if __name__ == '__main__' :
     np.save(saving_folder + 'all_pxr.npy', all_pxr)
     np.save(saving_folder + 'all_pyr.npy', all_pyr)
 
-    all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
-    all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
-    all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
-    all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
+    #all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
+    #all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
+    #all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
+    #all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
     Lp = f(all_pxr, all_pyr, all_pxl, all_pyl)
 
     Lrp = RtoL_transfo(Lp[0][0], M)
@@ -281,8 +281,8 @@ if __name__ == '__main__' :
 
 
     print(Lx3d,Ly3d,Lz3d)
-    np.savetxt(saving_folder+'Lx3d.npy', Lx3d)
-    np.savetxt(saving_folder+'Ly3d.npy', Ly3d)
-    np.savetxt(saving_folder+'Lz3d.npy', Lz3d)
+    np.savetxt(saving_folder+'results_id/'+'Lx3d.npy', Lx3d)
+    np.savetxt(saving_folder+'results_id/'+'Ly3d.npy', Ly3d)
+    np.savetxt(saving_folder+'results_id/'+'Lz3d.npy', Lz3d)
 
 

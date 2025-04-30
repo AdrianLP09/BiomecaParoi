@@ -45,7 +45,7 @@ def CoordCam(path=str, mask=str, savefile=str):
 
     except IndexError:
         image = plt.imread(Liste_image[0])
-        im_mask = plt.imread(Mask)[:,:]/255.
+        im_mask = plt.imread(Mask)[:,:,0]/255.
         print(2)
     print(image.shape,im_mask.shape)
     ################################ First step : spotting the nodes
@@ -189,7 +189,7 @@ if __name__=='__main__':
 
     date = '2025_04_28'
     sample = 'SC_37_40_4DFIXNR'
-    nZ = 7
+    nZ = 9
     data_folder = f'./{date}/results_calib/nZ_{nZ}/'
 
     calibration_dict = {

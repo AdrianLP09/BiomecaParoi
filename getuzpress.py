@@ -9,7 +9,7 @@ date = '2025_04_28'
 sili = 'SC_37_40'
 tricot = '4DFIXNR'
 nZ = 9
-l_pform = 3
+l_pform = 4
 method_dict = {'Zernike','Lagrange','Soloff'}
 method = input('Choose a method\n')
 if not method in method_dict:
@@ -65,7 +65,7 @@ for i in range(len(XX)):
   Uy.append(YY[i] - YY[0])
   Uz.append(ZZ[i] - ZZ[0])
 
-Uzmax = [-Uz[i][50][50] for i in range(len(Uz))]
+Uzmax = [Uz[i][50][50] for i in range(len(Uz))]
 
 
 #Récupération de la pression à chaque image

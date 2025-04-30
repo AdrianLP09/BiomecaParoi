@@ -8,7 +8,7 @@ date = '2025_04_28'
 sili = 'SC_37_40'
 tricot = '4DFIXNR'
 nZ = 9
-l_pform = 3
+l_pform = 4
 method_dict = {'Zernike','Lagrange','Soloff'}
 method = input('Choose a method\n')
 if not method in method_dict:
@@ -128,28 +128,34 @@ Upz = zp-z0
 
 PER = [i for i in np.arange(0.55, 0.95, 0.05)]
 Lr = []
+PER2 = []
 for per in PER:
   print(per)
-  w = np.where(np.round(Upz)==np.round(per*max(Upz)))
-  res = fit_ellipse(xp[w], yp[w])
-  a = (-np.sqrt(2*(res[0]*res[4]**2 + res[2]*res[3]**2 - res[1]*res[3]*res[4] + (res[1]**2 - 4*res[0]*res[2])*res[5])*((res[0]+res[2]) + np.sqrt((res[0]-res[2])**2 + res[1]**2))))/(res[1]**2 - 4*res[0]*res[2])
-  b = (-np.sqrt(2*(res[0]*res[4]**2 + res[2]*res[3]**2 - res[1]*res[3]*res[4] + (res[1]**2 - 4*res[0]*res[2])*res[5])*((res[0]+res[2]) - np.sqrt((res[0]-res[2])**2 + res[1]**2))))/(res[1]**2 - 4*res[0]*res[2])
-  x0 = (2*res[2]*res[3] - res[1]*res[4])/(res[1]**2 - 4*res[0]*res[2])
-  y0 = (2*res[0]*res[4] - res[1]*res[3])/(res[1]**2 - 4*res[0]*res[2])
-  teh = np.arctan((res[2] - res[0] - np.sqrt((res[0] - res[2])**2 + res[1]**2))/res[1])
-  print('aniso:', min(b/a, a/b))
-  print('angle:', teh*180/np.pi)
-  Lr.append(min(b/a, a/b))
-  fig, ax = plt.subplots(subplot_kw={'aspect': 'equal'})
-  e = Ellipse(xy = [x0, y0], width = 2*a, height = 2*b, angle = 180*teh/np.pi, facecolor='white', edgecolor='b', linewidth=12)
-  ax.add_artist(e)
-  plt.scatter(xp[w], yp[w], c='r', linewidths=0.02)
-  ax.set_xlabel('x (mm)')
-  ax.set_ylabel('y (mm)')
-  plt.xlim(50,80)
-  plt.ylim(0,50)
-  plt.show()
+  try:
+    w = np.where(np.round(Upz)==np.round(per*max(Upz)))
+    res = fit_ellipse(xp[w], yp[w])
+    a = (-np.sqrt(2*(res[0]*res[4]**2 + res[2]*res[3]**2 - res[1]*res[3]*res[4] + (res[1]**2 - 4*res[0]*res[2])*res[5])*((res[0]+res[2]) + np.sqrt((res[0]-res[2])**2 + res[1]**2))))/(res[1]**2 - 4*res[0]*res[2])
+    b = (-np.sqrt(2*(res[0]*res[4]**2 + res[2]*res[3]**2 - res[1]*res[3]*res[4] + (res[1]**2 - 4*res[0]*res[2])*res[5])*((res[0]+res[2]) - np.sqrt((res[0]-res[2])**2 + res[1]**2))))/(res[1]**2 - 4*res[0]*res[2])
+    x0 = (2*res[2]*res[3] - res[1]*res[4])/(res[1]**2 - 4*res[0]*res[2])
+    y0 = (2*res[0]*res[4] - res[1]*res[3])/(res[1]**2 - 4*res[0]*res[2])
+    teh = np.arctan((res[2] - res[0] - np.sqrt((res[0] - res[2])**2 + res[1]**2))/res[1])
+    print('aniso:', min(b/a, a/b))
+    print('angle:', teh*180/np.pi)
+    Lr.append(min(b/a, a/b))
+    PER2.append(per)
+    fig, ax = plt.subplots(subplot_kw={'aspect': 'equal'})
+    e = Ellipse(xy = [x0, y0], width = 2*a, height = 2*b, angle = 180*teh/np.pi, facecolor='white', edgecolor='b', linewidth=12)
+    ax.add_artist(e)
+    plt.scatter(xp[w], yp[w], c='r', linewidths=0.02)
+    ax.set_xlabel('x (mm)')
+    ax.set_ylabel('y (mm)')
+    plt.xlim(50,80)
+    plt.ylim(0,50)
+    plt.show()
+  except np.linalg.LinAlgError :
+    print('Pas de correspondance')
 
+PER=PER2
 plt.scatter(PER, Lr)
 plt.show()
 np.savetxt(f'./{date}/{sili}_{tricot}/{polform}/L_aniso.txt', Lr)
