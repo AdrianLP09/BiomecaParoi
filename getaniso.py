@@ -20,8 +20,8 @@ def fit_ellipse(x, y):
     ak = eigvec[:, np.nonzero(con > 0)[0]]
     return np.concatenate((ak, T @ ak)).ravel()
 
-date = '2023_12_18'
-sili = 'SC37_40'
+date = '2025_04_28'
+sili = 'SC_37_40'
 
 ##Pour P = 245 mbar (ip correspond à l'image à cette pression)
 def getaniso(tricot: str):
@@ -42,9 +42,9 @@ def getaniso(tricot: str):
     ip = 0
   
   ip = -2
-  X3d = np.loadtxt(fname=f'./{date}/40d_cd/{sili}/X3d_{sili}.txt', delimiter=' ')[:ip+1]
-  Y3d = np.loadtxt(fname=f'./{date}/40d_cd/{sili}/Y3d_{sili}.txt', delimiter=' ')[:ip+1]
-  Z3d = np.loadtxt(fname=f'./{date}/40d_cd/{sili}/Z3d_{sili}.txt', delimiter=' ')[:ip+1]      
+  X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/results_id/Lx3d.npy', delimiter=' ')[:ip+1]
+  Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/results_id/Ly3d.npy', delimiter=' ')[:ip+1]
+  Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/results_id/Lz3d.npy', delimiter=' ')[:ip+1]
   
   X0min = min(X3d[0])
   X0max = max(X3d[0])
@@ -173,48 +173,48 @@ resP1 = least_squares(funP1, theta0)
 inter_PER = np.linspace(0.55, 0.9, 100) 
 
 
-ax = plt.axes()
-ax.set_xlabel('%Uzmax')
-ax.set_ylabel('b/a')
-plt.scatter(PER, Lr4DFIXNR, label=f'4DFIXNR_pente={np.round(res4DFIXNR.x[0],3)}', c='b')
-plt.plot(inter_PER, flin(res4DFIXNR.x, inter_PER), c='b')
-plt.scatter(PER, LrP7NR, label=f'P7NR_pente={np.round(resP7NR.x[0],3)}', c='orange')
-plt.plot(inter_PER, flin(resP7NR.x, inter_PER), c='orange')
-plt.scatter(PER, LrA1L, label=f'A1L_pente={np.round(resA1L.x[0],3)}', c='g')
-plt.plot(inter_PER, flin(resA1L.x, inter_PER), c='g')
-plt.scatter(PER, LrP1, label=f'P1_pente={np.round(resP1.x[0],3)}', c='r')
-plt.plot(inter_PER, flin(resP1.x, inter_PER), c='r')
-plt.legend()
-plt.show()
-
-
-#x = X3d[70]
-#y = Y3d[70]
-#z = Z3d[70]
-#x1 = [cx+b*np.sin(teh), cx-b*np.sin(teh)]
-#y1 = [cy-b*np.cos(teh), cy+b*np.cos(teh)]
-#z1 = [76,76]
-#x2 = [cx+a*np.cos(teh), cx-a*np.cos(teh)]
-#y2 = [cy+a*np.sin(teh), cy-a*np.sin(teh)]
-#z2 = [76,76]
-
-#fig = plt.figure(figsize = (16, 9))
-#ax = plt.axes(projection ="3d")
-#ax.grid(visible = True, color ='grey',
-#   linestyle ='-.', linewidth = 0.3,
-#   alpha = 0.2)
-#my_cmap = plt.get_cmap('hsv')
-#sctt = ax.scatter3D(x, y, z,
-#		  alpha = 0.8,
-#		  c = z,
-#		  cmap = my_cmap)
-#ax.plot(x1, y1, z1, linewidth=5, color='k')
-#ax.plot(x2, y2, z2, linewidth=5, color='k')
-#plt.title("Results P1")
-#ax.set_xlabel('x (mm)', fontweight ='bold')
-#ax.set_ylabel('y (mm)', fontweight ='bold')
-#ax.set_zlabel('z (mm)', fontweight ='bold')
-#fig.colorbar(sctt, ax = ax, shrink = 0.5, aspect = 5)
+#ax = plt.axes()
+#ax.set_xlabel('%Uzmax')
+#ax.set_ylabel('b/a')
+#plt.scatter(PER, Lr4DFIXNR, label=f'4DFIXNR_pente={np.round(res4DFIXNR.x[0],3)}', c='b')
+#plt.plot(inter_PER, flin(res4DFIXNR.x, inter_PER), c='b')
+#plt.scatter(PER, LrP7NR, label=f'P7NR_pente={np.round(resP7NR.x[0],3)}', c='orange')
+#plt.plot(inter_PER, flin(resP7NR.x, inter_PER), c='orange')
+#plt.scatter(PER, LrA1L, label=f'A1L_pente={np.round(resA1L.x[0],3)}', c='g')
+#plt.plot(inter_PER, flin(resA1L.x, inter_PER), c='g')
+#plt.scatter(PER, LrP1, label=f'P1_pente={np.round(resP1.x[0],3)}', c='r')
+#plt.plot(inter_PER, flin(resP1.x, inter_PER), c='r')
+#plt.legend()
 #plt.show()
+
+
+x = X3d[70]
+y = Y3d[70]
+z = Z3d[70]
+x1 = [cx+b*np.sin(teh), cx-b*np.sin(teh)]
+y1 = [cy-b*np.cos(teh), cy+b*np.cos(teh)]
+z1 = [76,76]
+x2 = [cx+a*np.cos(teh), cx-a*np.cos(teh)]
+y2 = [cy+a*np.sin(teh), cy-a*np.sin(teh)]
+z2 = [76,76]
+
+fig = plt.figure(figsize = (16, 9))
+ax = plt.axes(projection ="3d")
+ax.grid(visible = True, color ='grey',
+  linestyle ='-.', linewidth = 0.3,
+  alpha = 0.2)
+my_cmap = plt.get_cmap('hsv')
+sctt = ax.scatter3D(x, y, z,
+		  alpha = 0.8,
+		  c = z,
+		  cmap = my_cmap)
+ax.plot(x1, y1, z1, linewidth=5, color='k')
+ax.plot(x2, y2, z2, linewidth=5, color='k')
+plt.title("Results P1")
+ax.set_xlabel('x (mm)', fontweight ='bold')
+ax.set_ylabel('y (mm)', fontweight ='bold')
+ax.set_zlabel('z (mm)', fontweight ='bold')
+fig.colorbar(sctt, ax = ax, shrink = 0.5, aspect = 5)
+plt.show()
 
 
