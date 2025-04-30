@@ -168,9 +168,9 @@ def fun4DFIXNR(theta):
 theta0 = [1, 1]
 
 res4DFIXNR = least_squares(fun4DFIXNR, theta0)    
-resP7NR = least_squares(funP7NR, theta0)    
-resA1L = least_squares(funA1L, theta0)    
-resP1 = least_squares(funP1, theta0)     
+#resP7NR = least_squares(funP7NR, theta0)
+#resA1L = least_squares(funA1L, theta0)
+#resP1 = least_squares(funP1, theta0)
 
 inter_PER = np.linspace(0.55, 0.9, 100) 
 
