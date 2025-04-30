@@ -252,7 +252,7 @@ plt.colorbar()
 plt.show()
 
 #plots carto tenseur en virant les bords
-a = np.where((Xmesh-Xmesh[50][50])**2 + (Ymesh-Ymesh[50][50])**2 > ((X0max-X0min)/2)**2)   
+a = np.where((Xmesh-Xmesh[50][50])**2 + (Ymesh-Ymesh[50][50])**2 > ((X0max-X0min)/2)**2)
 for i in range(len(a[0])):
   F[-1][a[0][i]][a[1][i]][0][0]= 'nan'
 plt.imshow(F[-1][:,:,0,0])
