@@ -57,7 +57,7 @@ Uzmax = [-Uz[i][50][50] for i in range(len(Uz))]
 
 
 #Récupération de la pression à chaque image
-Limage = sorted(glob(f'./{date}/{sili}_{tricot}/Essai_3/video_extenso_left/' + '0*'))
+Limage = sorted(glob(f'./{date}/{sili}_{tricot}/video_extenso_left/' + '0*'))
 Lname = []
 for i in range(len(Limage)):
   Lname.append(Limage[i].split('/')[-1])
@@ -70,8 +70,8 @@ Ltime2 = []
 for i in range(len(Ltime)):
   Ltime2.append(float(Ltime[i].split('.t')[0]))
 
-Tp = np.loadtxt(f'./{date}/{sili}_{tricot}/Essai_3/data_ali.txt', delimiter=',', skiprows=1)[:,0]
-Pp = np.loadtxt(f'./{date}/{sili}_{tricot}/Essai_3/data_ali.txt', delimiter=',', skiprows=1)[:,1]
+Tp = np.loadtxt(f'./{date}/{sili}_{tricot}/data_ali.txt', delimiter=',', skiprows=1)[:,0]
+Pp = np.loadtxt(f'./{date}/{sili}_{tricot}/data_ali.txt', delimiter=',', skiprows=1)[:,1]
 Pp=Pp-Pp[0]
 
 

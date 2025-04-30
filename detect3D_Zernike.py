@@ -6,13 +6,14 @@ from skimage.measure import label, regionprops
 from skimage.segmentation import clear_border
 from skimage.util import invert
 from glob import glob
+import cv2
 from math import *
 import math
-import cv2
 import solve_library as solvel
 import data_library as data
 
 import pycaso as pcs
+
 
 def return_num(s: str):
   try:
@@ -125,28 +126,28 @@ def CoordCam(path=str, mask=str, savefile=str):
                 label_img = label(255.*invar_ZOI)
                 regions = regionprops((label_img))
                 area = [region.area for region in regions]
-            if area:
-                '''
-                if spots are detected in the ZOI, the bigger one is selected.
-                Barycenters and bounding box of this spot are then updated
-                '''
-                roi_index = np.where(area==max(area))[0][0]
-                px,py = regions[roi_index].centroid # X,Y coordin. in local ZOI
-                ppx = minr-pix+px # compute X coordinate in global image
-                ppy = minc-pix+py # compute Y coordinate in global image
-                minrr, mincc, maxrr, maxcc = regions[roi_index].bbox
-                boundbox[i] = (minrr+minr-pix, mincc+minc-pix, maxrr+minr-pix, maxcc+minc-pix) # update bbox
-                barx[i] = ppx # update X barycenter coordinate
-                bary[i] = ppy # update Y barycenter coordinate
-            else:
-                '''
-                if no spot is detected, boundbox and barycenter coordinates
-                are set to 'nan'
-                '''
-                boundbox[i]=(np.float('nan'),np.float('nan'), np.float('nan'),np.float( 'nan'))
-                barx[i]=np.float('nan')
-                bary[i]=np.float('nan')
-            ax.plot(ppy,ppx,'ro',markersize=1)
+                if area:
+                    '''
+                    if spots are detected in the ZOI, the bigger one is selected.
+                    Barycenters and bounding box of this spot are then updated
+                    '''
+                    roi_index = np.where(area==max(area))[0][0]
+                    px,py = regions[roi_index].centroid # X,Y coordin. in local ZOI
+                    ppx = minr-pix+px # compute X coordinate in global image
+                    ppy = minc-pix+py # compute Y coordinate in global image
+                    minrr, mincc, maxrr, maxcc = regions[roi_index].bbox
+                    boundbox[i] = (minrr+minr-pix, mincc+minc-pix, maxrr+minr-pix, maxcc+minc-pix) # update bbox
+                    barx[i] = ppx # update X barycenter coordinate
+                    bary[i] = ppy # update Y barycenter coordinate
+                else:
+                    '''
+                    if no spot is detected, boundbox and barycenter coordinates
+                    are set to 'nan'
+                    '''
+                    boundbox[i]=(np.float('nan'),np.float('nan'), np.float('nan'),np.float( 'nan'))
+                    barx[i]=np.float('nan')
+                    bary[i]=np.float('nan')
+                ax.plot(ppy,ppx,'ro',markersize=1)
         #plt.savefig(savefile + '/img_%06d.png'%j,dpi=150)
         plt.close()
         all_px = np.vstack([all_px, barx])
@@ -189,44 +190,44 @@ if __name__=='__main__':
     date = '2025_04_28'
     sample = 'SC_37_40_4DFIXNR'
     nZ = 7
-    saving_folder = f'./{date}/nZ_{nZ}/results_calib/'
+    data_folder = f'./{date}/results_calib/nZ_{nZ}/'
 
     calibration_dict = {
       'cam1_folder' : f'./{date}/r',
       'cam2_folder' : f'./{date}/l',
       'name' : 'calibration',
-      'saving_folder' : saving_folder,
+      'saving_folder' : data_folder,
       'ncx' : 12,
       'ncy' : 12,
       'sqr' : 7.5}  #in mm
 
-    saving_folder=f'./{date}/{sample}/results_id/'
+    saving_folder=f'./{date}/{sample}/nZ_{nZ}/'
 
-    M = np.load(f'./{date}/{sample}/Essai_3/transfomatrix.npy')
+    M = np.load(f'./{date}/{sample}/transfomatrix.npy')
 
-    A_constant=np.load(f'./{date}/nZ_{nZ}/results_calib/A_Zernike.npy')
+    A_constant=np.load(data_folder+'A_Zernike.npy')
 
     C_dim=data.cameras_size(**calibration_dict)
 
     ##reverse the right images, cameras are in mirror
-    #Liste_image  = sorted(glob(f'./{date}/{sample}/Essai_3/video_extenso_right/'+"0*"))
+    #Liste_image  = sorted(glob(f'./{date}/{sample}/video_extenso_right/'+"0*"))
     #for image in Liste_image:
         #img=cv2.imread(image)
         #img=cv2.rotate(img,cv2.ROTATE_180)
         #cv2.imwrite(image,img)
 
-    all_pxl, all_pyl = CoordCam(f'./{date}/{sample}/Essai_3/video_extenso_left/', 'maskL.tiff')
-    np.save(f'./{date}/{sample}/Essai_3/all_pxl.npy', all_pxl)
-    np.save(f'./{date}/{sample}/Essai_3/all_pyl.npy', all_pyl)
+    all_pxl, all_pyl = CoordCam(f'./{date}/{sample}/video_extenso_left/', 'maskL.tiff')
+    np.save(saving_folder + 'all_pxl.npy', all_pxl)
+    np.save(saving_folder + 'all_pyl.npy', all_pyl)
 
-    all_pxr, all_pyr = CoordCam(f'./{date}/{sample}/Essai_3/video_extenso_right/', 'maskR.tiff')
-    np.save(f'./{date}/{sample}/Essai_3/all_pxr.npy', all_pxr)
-    np.save(f'./{date}/{sample}/Essai_3/all_pyr.npy', all_pyr)
+    all_pxr, all_pyr = CoordCam(f'./{date}/{sample}/video_extenso_right/', 'maskR.tiff')
+    np.save(saving_folder + 'all_pxr.npy', all_pxr)
+    np.save(saving_folder + 'all_pyr.npy', all_pyr)
 
-    all_pxl = np.load(f'./{date}/{sample}/Essai_3/all_pxl.npy', allow_pickle=True)
-    all_pyl = np.load(f'./{date}/{sample}/Essai_3/all_pyl.npy', allow_pickle=True)
-    all_pxr = np.load(f'./{date}/{sample}/Essai_3/all_pxr.npy', allow_pickle=True)
-    all_pyr = np.load(f'./{date}/{sample}/Essai_3/all_pyr.npy', allow_pickle=True)
+    all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
+    all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
+    all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
+    all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
     Lp = f(all_pxr, all_pyr, all_pxl, all_pyl)
 
     Lrp = RtoL_transfo(Lp[0][0], M)
@@ -267,6 +268,7 @@ if __name__=='__main__':
     Lx3d = []
     Ly3d = []
     Lz3d = []
+
     for i in range(len(Lp)):
         Right, Left = Lp[i]
         Z_solution = pcs.Zernike_identification(Right,
@@ -279,7 +281,7 @@ if __name__=='__main__':
         Ly3d.append(y)
         Lz3d.append(z)
     print(Lx3d,Ly3d,Lz3d)
-    np.savetxt(saving_folder+'Lx3d.npy', Lx3d)
-    np.savetxt(saving_folder+'Ly3d.npy', Ly3d)
-    np.savetxt(saving_folder+'Lz3d.npy', Lz3d)
+    np.savetxt(saving_folder+'results_id/'+'Lx3d.npy', Lx3d)
+    np.savetxt(saving_folder+'results_id/'+'Ly3d.npy', Ly3d)
+    np.savetxt(saving_folder+'results_id/'+'Lz3d.npy', Lz3d)
 

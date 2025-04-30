@@ -15,9 +15,9 @@ if __name__ == "__main__":
 
     date = "2025_04_28"
 
-    nZ = 7 #polynomial degree
+    nZ = 9 #polynomial degree
 
-    saving_folder = f'./{date}/nZ_{nZ}/results_calib/'
+    saving_folder = f'./{date}/results_calib/nZ_{nZ}/'
 
 
     # Define the inputs
@@ -133,11 +133,11 @@ if __name__ == "__main__":
 
 
 
-    z_points=np.ones((n//2,np.shape(X)[1]))
-    for i in range(np.shape(X)[0]//2):
-      z_points[i]=z_points[i]*x3_list[i]
+    #z_points=np.ones((n//2,np.shape(X)[1]))
+    #for i in range(np.shape(X)[0]//2):
+      #z_points[i]=z_points[i]*x3_list[i]
 
-    A_Zernike=np.load(f'./{date}/nZ_{nZ}/results_calib/A_Zernike.npy')
+    #A_Zernike=np.load(f'./{date}/nZ_{nZ}/results_calib/A_Zernike.npy')
 
     ##Z_mean,Z_std,Z_iter = pcs.retroprojection_error('Zernike',
                                                      ##nZ,
@@ -154,19 +154,19 @@ if __name__ == "__main__":
 
 
     #get the points of cam1 and cam2
-    X1,X2 = data.DIC_get_positions(DIC_dict)
+    #X1,X2 = data.DIC_get_positions(DIC_dict)
 
-    size=data.cameras_size(**calibration_dict)
+    #size=data.cameras_size(**calibration_dict)
 
 
-    #Identification in the 3D space of the detected points
-    Zernike_results = pcs.Zernike_identification(Xc1_identified = X1[0],
-                                                 Xc2_identified = X2[0],
-                                                 Zernike_constants = A_Zernike,
-                                                 Zernike_pform = nZ,
-                                                 Cameras_dimensions = size)
+    ##Identification in the 3D space of the detected points
+    #Zernike_results = pcs.Zernike_identification(Xc1_identified = X1[0],
+                                                 #Xc2_identified = X2[0],
+                                                 #Zernike_constants = A_Zernike,
+                                                 #Zernike_pform = nZ,
+                                                 #Cameras_dimensions = size)
 
-    np.save(f'./{date}/nZ_{nZ}/results_calib/Zernike_results.npy', Zernike_results)
+    #np.save(f'./{date}/nZ_{nZ}/results_calib/Zernike_results.npy', Zernike_results)
 
 
     #ver = crappy.blocks.VideoExtenso(camera='XiAPI',

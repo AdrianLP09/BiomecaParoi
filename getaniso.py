@@ -22,9 +22,10 @@ def fit_ellipse(x, y):
 
 date = '2025_04_28'
 sili = 'SC_37_40'
+tricot = '4DFIXNR'
 
 ##Pour P = 245 mbar (ip correspond à l'image à cette pression)
-tricot = '4DFIXNR'
+
 ip = 0
 if tricot == '4DFIXNR':
 #    ip = 104 (essai génie civil)
@@ -138,7 +139,7 @@ for per in PER:
 
 plt.scatter(PER, Lr)
 plt.show()
-
+np.savetxt(f'./{date}/{sili}_{tricot}/L_aniso.txt', Lr)
 
 
 def flin(theta, x):

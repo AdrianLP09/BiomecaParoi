@@ -15,9 +15,9 @@ if __name__ == "__main__":
 
     date = "2025_04_28"
 
-    l_pform = 4   #polynomial degree
+    l_pform = 3   #polynomial degree
 
-    saving_folder = f'./{date}/Lpform_{l_pform}/results_calib/'
+    saving_folder = f'./{date}/results_calib/Lpform_{l_pform}/'
 
 
     # Define the inputs
@@ -76,6 +76,6 @@ if __name__ == "__main__":
                                                    L_constants,
                                                    l_pform)
 
-    np.save(f'./{date}/Lpform_{l_pform}/results_calib/Lagrange_results.npy', Lagrange_results)
+    np.save(f'./{date}/results_calib/Lpform_{l_pform}/Lagrange_results.npy', Lagrange_results)
     print(Lagrange_results)
 
