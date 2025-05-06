@@ -4,11 +4,13 @@ from scipy.interpolate import Rbf
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
 
-date = '2025_04_28'
-sili = 'SC_37_40'
+date = '2025_05_05'
+sili = 'SC37_40'
 tricot = '4DFIXNR'
 nZ = 9
 l_pform = 4
+spform=332
+
 method_dict = {'Zernike','Lagrange','Soloff'}
 method = input('Choose a method\n')
 if not method in method_dict:
@@ -19,6 +21,9 @@ if method == 'Lagrange':
 
 if method == 'Zernike':
    polform = f'nZ_{nZ}'
+
+if method == 'Soloff':
+  polform = f'Spform_{spform}'
 
 
 def fit_ellipse(x, y):
@@ -56,10 +61,10 @@ if tricot == 'P7R':
   ip = 0
 
 ip = -2
-X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Lx3d.npy', delimiter=' ')[:ip+1]
-Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Ly3d.npy', delimiter=' ')[:ip+1]
-Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Lz3d.npy', delimiter=' ')[:ip+1]
-
+X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/X3d_{sili}.txt', delimiter=' ')[:ip+1]
+Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Y3d_{sili}.txt', delimiter=' ')[:ip+1]
+Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Z3d_{sili}.txt', delimiter=' ')[:ip+1]
+print(len(X3d),len(Y3d),len(Z3d))
 X0min = min(X3d[0])
 X0max = max(X3d[0])
 Y0min = min(Y3d[0])
@@ -132,7 +137,7 @@ PER2 = []
 for per in PER:
   print(per)
   try:
-    w = np.where(np.round(Upz)==np.round(per*max(Upz)))
+    w = np.where(np.round(Upz,1)==np.round(per*max(Upz),1))
     res = fit_ellipse(xp[w], yp[w])
     a = (-np.sqrt(2*(res[0]*res[4]**2 + res[2]*res[3]**2 - res[1]*res[3]*res[4] + (res[1]**2 - 4*res[0]*res[2])*res[5])*((res[0]+res[2]) + np.sqrt((res[0]-res[2])**2 + res[1]**2))))/(res[1]**2 - 4*res[0]*res[2])
     b = (-np.sqrt(2*(res[0]*res[4]**2 + res[2]*res[3]**2 - res[1]*res[3]*res[4] + (res[1]**2 - 4*res[0]*res[2])*res[5])*((res[0]+res[2]) - np.sqrt((res[0]-res[2])**2 + res[1]**2))))/(res[1]**2 - 4*res[0]*res[2])

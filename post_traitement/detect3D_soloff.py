@@ -43,7 +43,7 @@ def CoordCam(path=str, mask=str, savefile=str):
     im_mask = plt.imread(Mask)[:,:,0]/255.
   except IndexError:
     image = plt.imread(Liste_image[0])
-    im_mask = plt.imread(Mask)[:,:]/255.
+    im_mask = plt.imread(Mask)[:,:,0]/255.
   ################################ First step : spotting the nodes
   img = invert(difference_of_gaussians(image, 5, 6))
   thresh = threshold_otsu(img[np.where(im_mask == 1)])
@@ -177,68 +177,26 @@ def RtoL_transfo(rightpoints, matrix):
   return np.array(Rightp) 
   
     
-############################################ CALIB EDDY ############################################
 
-def Soloff_identification (Xc1_identified,
-                        Xc2_identified,
-                        A111, 
-                        A_pol,
-                        polynomial_form = 555,
-                        method = 'curve_fit') :
-    """Identification of the points detected on both cameras left and right 
-    into the global 3D-space
-    
-    Args:
-       Xc1_identified : numpy.ndarray
-           Points identified on the left camera
-       Xc2_identified : numpy.ndarray
-           Points identified on the right camera
-       A111 : numpy.ndarray
-           Constants of Soloff polynomial form '111'
-       A_pol : numpy.ndarray
-           Constants of Soloff polynomial form chose (polynomial_form)
-       polynomial_form : int, optional
-           Polynomial form
-       method : str, optional
-           Python method used to solve it ('Least-squares' or 'curve-fit')
-
-    Returns:
-       x_solution : numpy.ndarray
-           Identification in the 3D space of the detected points
-    """
-    
-    # We're searching for the solution x0(x1, x2, x3) as Xc1 = ac1 . 
-    # (1 x1 x2 x3) and Xc2 = ac2 . (1 x1 x2 x3)  using least square method.
-    x0 = solvel.least_square_method (Xc1_identified, Xc2_identified, A111)
-    
-    # Solve the polynomials constants ai with curve-fit method (Levenberg 
-    # Marcquardt)
-    x_solution, Xc, Xd = solvel.Levenberg_Marquardt_solving(Xc1_identified, 
-                                                            Xc2_identified, 
-                                                            A_pol, 
-                                                            x0, 
-                                                            polynomial_form = polynomial_form, 
-                                                            method = 'curve_fit')
-    return (x_solution)
 
 
 if __name__ == '__main__' :  
 
-    A111 = np.load(f'../data/SC37_40_P1/A111.npy')
-    A_pol = np.load(f'../data/SC37_40_P1/A_pol.npy')
+
     spform = 332
+    date = "2025_05_05"
+    saving_folder = f'../{date}/results_calib/Spform_{spform}/'
 
-    saving_folder = f'../2025_05_05/Spform_{spform}/SC37_40_P1/'
-
-    date = "2023_07_06"
+    A111 = np.load(saving_folder+'A111.npy')
+    A_pol = np.load(saving_folder+'A_pol.npy')
     
-    M = np.load(f'../data/SC37_40_P1/transfomatrix.npy')
+    M = np.load(f'../{date}/results_calib/transfomatrix.npy')
 
-    #all_pxl, all_pyl = CoordCam(f'../data/SC37_40_P1/left_SC37_40_P1/', 'maskL.tiff', './test_calib/calib/images_centres_L')
+    #all_pxl, all_pyl = CoordCam(f'../data/SC37_40_4DFIXNR/left_SC37_40_4DFIXNR/', 'maskL.tiff', './test_calib/calib/images_centres_L')
     #np.savetxt(saving_folder + 'all_pxl.txt', all_pxl)
     #np.savetxt(saving_folder + 'all_pyl.txt', all_pyl)
 
-    #all_pxr, all_pyr = CoordCam(f'../data/SC37_40_P1/right_SC37_40_P1/', 'maskR.tiff', './test_calib/calib/images_centres_R')
+    #all_pxr, all_pyr = CoordCam(f'../data/SC37_40_4DFIXNR/right_SC37_40_4DFIXNR/', 'maskR.tiff', './test_calib/calib/images_centres_R')
     #np.savetxt(saving_folder + 'all_pxr.txt', all_pxr)
     #np.savetxt(saving_folder + 'all_pyr.txt', all_pyr)
 
@@ -254,34 +212,35 @@ if __name__ == '__main__' :
     for j in range(len(Lrp)):
 #      if Lp[0][0][j][0] - Lrp[j][0] > 40 or Lp[0][0][j][0] - Lrp[j][0] < 20: #pour 9 degrés et 10 degrés l=9cm
 #      if Lp[0][0][j][0] - Lrp[j][0] > 90 or Lp[0][0][j][0] - Lrp[j][0] < 70: #pour 18 degrés
-      if Lp[0][0][j][0] - Lrp[j][0] > 60 or Lp[0][0][j][0] - Lrp[j][0] < 40: #pour 20 degrés l=15 cm
-#      if Lp[0][0][j][0] - Lrp[j][0] > 115 or Lp[0][0][j][0] - Lrp[j][0] < 90: #pour 28 degrés 
-#      if Lp[0][0][j][0] - Lrp[j][0] > 80 or Lp[0][0][j][0] - Lrp[j][0] < 60: #pour 30 degrés l=20 cm                 
+#      if Lp[0][0][j][0] - Lrp[j][0] > 60 or Lp[0][0][j][0] - Lrp[j][0] < 40: #pour 20 degrés l=15 cm
+#      if Lp[0][0][j][0] - Lrp[j][0] > 115 or Lp[0][0][j][0] - Lrp[j][0] < 90: #pour 28 degrés
+#      if Lp[0][0][j][0] - Lrp[j][0] > 80 or Lp[0][0][j][0] - Lrp[j][0] < 60: #pour 30 degrés l=20 cm
 #      if Lp[0][0][j][0] - Lrp[j][0] > 140 or Lp[0][0][j][0] - Lrp[j][0] < 120: #pour 40 degrés
-#      if Lp[0][0][j][0] - Lrp[j][0] > 165 or Lp[0][0][j][0] - Lrp[j][0] < 130: #pour 40 degrés l=31 cm
+      if Lp[0][0][j][0] - Lrp[j][0] > 165 or Lp[0][0][j][0] - Lrp[j][0] < 130: #pour 40 degrés l=31 cm
 #      if Lp[0][0][j][0] - Lrp[j][0] > 190 or Lp[0][0][j][0] - Lrp[j][0] < 140:
         Lfalse.append([Lrp[j], j])
     print(len(Lfalse))
-    Lid = []   
+    Lid = []
     for j in range(len(Lfalse)):
         for k in range(len(Lfalse)):
 #          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 10 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 50: #pour 9 degrés et 10 degrés l=9cm
 #          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 60 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 100: #pour 18 degrés
-          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 40 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 60: #pour 20 degrés l=15 cm
+#          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 40 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 60: #pour 20 degrés l=15 cm
 #          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 80 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 120: #pour 28 degrés
-#          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 60 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 90: #pour 30 degrés l=20 cm 
+#          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 60 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 90: #pour 30 degrés l=20 cm
 #          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 110 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 150: #pour 40 degrés
-#          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 120 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 180: #pour 40 degrés l=31 cm
-            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 2: #pour 9 degrés et 20 degrés l=15 cm et 10 degrés l=9cm
+          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 120 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 180: #pour 40 degrés l=31 cm
+#            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 2: #pour 9 degrés et 20 degrés l=15 cm et 10 degrés l=9cm
 #            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 3: #pour 18 degrés
-#            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 4: #pour 28 degrés et 30 degrés l=20 cm 
-#            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 8: #pour 40 degrés et pour 40 degrés l=31 cm
-              Lid.append([Lfalse[j][1], Lfalse[k][1]]) 
+#            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 4: #pour 28 degrés et 30 degrés l=20 cm
+            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 8: #pour 40 degrés et pour 40 degrés l=31 cm
+              Lid.append([Lfalse[j][1], Lfalse[k][1]])
     print(len(Lid))
     for i in range(len(Lp)):
       Rightbuff = Lp[i][1].copy()
       for j in range(len(Lid)):
         Lp[i][1][Lid[j][0]] = Rightbuff[Lid[j][1]]
+
 
     
     Lx3d = []
@@ -289,20 +248,20 @@ if __name__ == '__main__' :
     Lz3d = []
     for i in range(len(Lp)):
       Left, Right = Lp[i]
-      xSoloff_solution = Soloff_identification (Left,
-                                                Right,
-                                                A111,
-                                                A_pol,
-                                                polynomial_form = spform,
-                                                method = 'curve_fit')
+      xSoloff_solution = pcs.Soloff_identification (Left,
+                                                    Right,
+                                                    A111,
+                                                    A_pol,
+                                                    Soloff_pform = spform,
+                                                    method = 'curve_fit')
       x,y,z = xSoloff_solution
       Lx3d.append(x)
       Ly3d.append(y)
       Lz3d.append(z)
  
-    np.savetxt(f'../opti_angle_calib/{date}/40d_cd/X3d_SC37_40.txt', Lx3d)
-    np.savetxt(f'../opti_angle_calib/{date}/40d_cd/Y3d_SC37_40.txt', Ly3d)
-    np.savetxt(f'../opti_angle_calib/{date}/40d_cd/Z3d_SC37_40.txt', Lz3d)
+    np.savetxt(f'../{date}/SC37_40_4DFIXNR/Spform_{spform}/X3d_SC37_40.txt', Lx3d)
+    np.savetxt(f'../{date}/SC37_40_4DFIXNR/Spform_{spform}/Y3d_SC37_40.txt', Ly3d)
+    np.savetxt(f'../{date}/SC37_40_4DFIXNR/Spform_{spform}/Z3d_SC37_40.txt', Lz3d)
 
     fig=plt.figure(figsize=(16,9))
     ax=plt.axes(projection='3d')

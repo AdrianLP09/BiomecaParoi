@@ -6,7 +6,7 @@ import os
 import solve_library_soloff as solvel 
 import data_library_soloff as data
 from math import *
-
+from Pycaso import pycaso as pcs
 
 def magnification (X1, X2, x1, x2) :
     """Calculation of the magnification between reals and detected positions
@@ -155,13 +155,19 @@ def Soloff_calibration (__calibration_dict__,
 
 if __name__ == '__main__' :  
 
-    date = '2023_12_18'
+    date = '2025_05_05'
+
+    # Chose the polynomial degree for the calibration fitting
+    spform=332
+
+    saving_folder = f'../{date}/results_calib/Spform_{spform}/'
 
     # Define the inputs
     __calibration_dict__ = {
-    'left_folder' : f'./{date}/40d_cd/SC37_40/left_12x12_5',
-    'right_folder' : f'./{date}/40d_cd/SC37_40/right_12x12_5',
+    'cam1_folder' : f'../data/SC37_40_4DFIXNR/left_12x12_5',
+    'cam2_folder' : f'../data/SC37_40_4DFIXNR/right_12x12_5',
     'name' : 'micro_calibration',
+    'saving_folder':saving_folder,
     'ncx' : 12,
     'ncy' : 12,
     'sqr' : 7.5}  #in mm
@@ -170,11 +176,7 @@ if __name__ == '__main__' :
     x3_list = []
     for i in range(21) :
         x3_list.append(20 + 5*i)
-    
-    saving_folder = f'./{date}/40d_cd/SC37_40/results_calib/'
-    
-    # Chose the polynomial degree for the calibration fitting
-    polynomial_form = 332
+
 
     # Create the result folder if not exist
     if os.path.exists(saving_folder) :
@@ -188,12 +190,11 @@ if __name__ == '__main__' :
     print('Start calibration')
     print('#####       ')
     
-    A111, A_pol, Magnification = Soloff_calibration (__calibration_dict__,
-                                                     x3_list,
-                                                     saving_folder,
-                                                     polynomial_form = polynomial_form,
-                                                     detection = True)
+    A111, A_pol, Magnification = pcs.Soloff_calibration (x3_list,
+                                                         Soloff_pform = spform,
+                                                         iterations=4,
+                                                         **__calibration_dict__)
 
-    np.save(f'./{date}/40d_cd/SC37_40/A111', A111)
-    np.save(f'./{date}/40d_cd/SC37_40/A_pol', A_pol)
+    np.save(saving_folder+'A111', A111)
+    np.save(saving_folder+'A_pol', A_pol)
     

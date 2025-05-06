@@ -21,6 +21,8 @@ if method == 'Lagrange':
 if method == 'Zernike':
    polform = f'nZ_{nZ}'
 
+if method == 'Soloff':
+   polform = f'Spform_{Spform}'
 
 X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Lx3d.npy', delimiter=' ')
 Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Ly3d.npy', delimiter=' ')

@@ -8,14 +8,16 @@ from glob import glob
 import numpy as np
 import cv2
 import data_library as data
+import matplotlib.pyplot as plt
+import solve_library as solvel
 
 if __name__ == "__main__":
 
     date = "2025_04_28"
 
-    Soloff_pform = 332   #polynomial degree
+    spform = 332   #polynomial degree
 
-    saving_folder = f'./{date}/results_calib/Soloff_pform{Soloff_pform}/'
+    saving_folder = f'./{date}/results_calib/Spform_{spform}/'
 
 
     # Define the inputs
@@ -59,12 +61,30 @@ if __name__ == "__main__":
       #cv2.imwrite(image,img)
 
     S_constants0, S_constants, Mag = pcs.Soloff_calibration(z_list = x3_list,
-                                                            Soloff_pform = Soloff_pform,
-                                                            plotting = False,
-                                                            iterations = 1)
+                                                            Soloff_pform = spform,
+                                                            iterations = 6,
+                                                            **calibration_dict)
 
     np.save(saving_folder+'S_constants0.npy', S_constants0)
     np.save(saving_folder+'S_constants.npy', S_constants)
+
+    coord=np.load(saving_folder+'3D_coordinates/3D_coordinates_Soloff.npy')
+
+    #display the coordinates in the 3D space
+
+    xc=[]
+    yc=[]
+    zc=[]
+    for i in range(len(coord[0])):
+      xc.append(coord[0][i])
+      yc.append(coord[1][i])
+      zc.append(coord[2][i])
+    ax=plt.figure().add_subplot(111,projection='3d')
+    ax.scatter(xc,yc,zc)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    plt.show()
 
     #X1,X2 = data.DIC_get_positions(DIC_dict)
 

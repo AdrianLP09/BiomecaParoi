@@ -34,9 +34,13 @@ def getaniso(tricot: str):
 
 
   date = "2023_07_06"
-  X3d = np.loadtxt(fname=f'../data/SC37_40_P1/X3d_SC37_40.txt', delimiter=' ')[:ip+1]
-  Y3d = np.loadtxt(fname=f'../data/SC37_40_P1/Y3d_SC37_40.txt', delimiter=' ')[:ip+1]
-  Z3d = np.loadtxt(fname=f'../data/SC37_40_P1/Z3d_SC37_40.txt', delimiter=' ')[:ip+1]
+  #X3d = np.loadtxt(fname=f'../data/SC37_40_{tricot}/X3d_SC37_40_{tricot}.txt', delimiter=' ')[:ip+1]
+  #Y3d = np.loadtxt(fname=f'../data/SC37_40_{tricot}/Y3d_SC37_40_{tricot}.txt', delimiter=' ')[:ip+1]
+  #Z3d = np.loadtxt(fname=f'../data/SC37_40_{tricot}/Z3d_SC37_40_{tricot}.txt', delimiter=' ')[:ip+1]
+
+  X3d = np.loadtxt(fname=f'../opti_angle_calib/{date}/40d_cd/X3d_SC37_40.txt', delimiter=' ')[:ip+1]
+  Y3d = np.loadtxt(fname=f'../opti_angle_calib/{date}/40d_cd/Y3d_SC37_40.txt', delimiter=' ')[:ip+1]
+  Z3d = np.loadtxt(fname=f'../opti_angle_calib/{date}/40d_cd/Z3d_SC37_40.txt', delimiter=' ')[:ip+1]
 
   X0min = min(X3d[0])
   X0max = max(X3d[0])
@@ -163,19 +167,19 @@ def getaniso(tricot: str):
 
   return(Lr) 
 
-#Lr4d = getaniso('4DFIXNR')
+Lr4d = getaniso('4DFIXNR')
 #Lrp7 = getaniso('P7NR')
 #Lra1 = getaniso('A1L')
-Lrp1 = getaniso('P1')
+#Lrp1 = getaniso('P1')
 PER = [i for i in np.arange(0.5, 0.95, 0.05)]
 
 ax = plt.axes()
 ax.set_xlabel('%Uzmax')
 ax.set_ylabel('b/a')
-#plt.scatter(PER, Lr4d, label='4DFIXNR')
+plt.scatter(PER, Lr4d, label='4DFIXNR')
 #plt.scatter(PER, Lrp7, label='P7NR')
 #plt.scatter(PER, Lra1, label='A1L')
-plt.scatter(PER, Lrp1, label='P1')
+#plt.scatter(PER, Lrp1, label='P1')
 plt.legend()
 plt.show()
 
@@ -190,18 +194,18 @@ plt.show()
 #theta0p7 = [1,1]
 #resp7 = least_squares(funp7, theta0p7)
 
-def fp1(theta, x):
-  return(theta[0]*x**4 + theta[1]*x**3 + theta[2]*x**2 + theta[3]*x + theta[4])
+#def fp1(theta, x):
+  #return(theta[0]*x**4 + theta[1]*x**3 + theta[2]*x**2 + theta[3]*x + theta[4])
   
-def funp1(theta):
-  return (fp1(theta, np.array(PER[:-1])) - np.array(Lrp1[:-1]))
+#def funp1(theta):
+  #return (fp1(theta, np.array(PER[:-1])) - np.array(Lrp1[:-1]))
   
-theta0p1 = [1,1,1,1,1]
-resp1 = least_squares(funp1, theta0p1)
+#theta0p1 = [1,1,1,1,1]
+#resp1 = least_squares(funp1, theta0p1)
 
-inter_per = np.linspace(0.5,0.9,100)
-plt.plot(inter_per, fp1(resp1.x, inter_per))
-plt.show()
+#inter_per = np.linspace(0.5,0.9,100)
+#plt.plot(inter_per, fp1(resp1.x, inter_per))
+#plt.show()
 
 
 

@@ -6,10 +6,16 @@ from skimage.measure import label, regionprops
 from skimage.segmentation import clear_border
 from skimage.util import invert
 from glob import glob
+import os
+import sys
+import pathlib
 import cv2
 import math
-import solve_library_soloff as solvel 
+import solve_library_soloff as solvel
 from math import *
+from Pycaso import solve_library as solvel
+from Pycaso import data_library as data
+from Pycaso import pycaso as pcs
 
 
 ############################################ DETECTION ANNIE ############################################
@@ -40,12 +46,15 @@ def CoordCam(path=str, mask=str, savefile=str):
   try:
     image = plt.imread(Liste_image[0])[:,:,0]
     im_mask = plt.imread(Mask)[:,:,0]/255.
+  ################################ First step : spotting the nodes
+    img = invert(difference_of_gaussians(image, 5, 6))
+    thresh = threshold_otsu(img[np.where(im_mask == 1)])
   except IndexError:
     image = plt.imread(Liste_image[0])
-    im_mask = plt.imread(Mask)[:,:,0]/255.
-  ################################ First step : spotting the nodes
-  img = invert(difference_of_gaussians(image, 5, 6))
-  thresh = threshold_otsu(img[np.where(im_mask == 1)])
+    im_mask = plt.imread(Mask)[:,:]/255.
+################################ First step : spotting the nodes
+    img = invert(difference_of_gaussians(image, 5, 6))
+    thresh = threshold_otsu(img[np.where(im_mask == 1)[:2]])
   imgb = img>thresh
   imgb[np.where(im_mask ==0)] = 0
   #plt.figure(); plt.imshow(imgb);plt.show()
@@ -84,7 +93,7 @@ def CoordCam(path=str, mask=str, savefile=str):
   plt.show()
   ##### Second step - iteration : ROI localization on the following images
   for j in np.arange(1, len(Liste_image), 1):  
-    #print(j)
+    print(j)
     image = plt.imread(Liste_image[j])
     img = invert(difference_of_gaussians(image, 5,6))
 #    img = invert(image)
@@ -176,64 +185,48 @@ def RtoL_transfo(rightpoints, matrix):
   return np.array(Rightp) 
   
     
-############################################ CALIB EDDY ############################################
 
-def Soloff_identification (Xc1_identified,
-                        Xc2_identified,
-                        A111, 
-                        A_pol,
-                        polynomial_form = 555,
-                        method = 'curve_fit') :
-    """Identification of the points detected on both cameras left and right 
-    into the global 3D-space
-    
-    Args:
-       Xc1_identified : numpy.ndarray
-           Points identified on the left camera
-       Xc2_identified : numpy.ndarray
-           Points identified on the right camera
-       A111 : numpy.ndarray
-           Constants of Soloff polynomial form '111'
-       A_pol : numpy.ndarray
-           Constants of Soloff polynomial form chose (polynomial_form)
-       polynomial_form : int, optional
-           Polynomial form
-       method : str, optional
-           Python method used to solve it ('Least-squares' or 'curve-fit')
-
-    Returns:
-       x_solution : numpy.ndarray
-           Identification in the 3D space of the detected points
-    """
-    
-    # We're searching for the solution x0(x1, x2, x3) as Xc1 = ac1 . 
-    # (1 x1 x2 x3) and Xc2 = ac2 . (1 x1 x2 x3)  using least square method.
-    x0 = solvel.least_square_method (Xc1_identified, Xc2_identified, A111)
-    
-    # Solve the polynomials constants ai with curve-fit method (Levenberg 
-    # Marcquardt)
-    x_solution, Xc, Xd = solvel.Levenberg_Marquardt_solving(Xc1_identified, 
-                                                            Xc2_identified, 
-                                                            A_pol, 
-                                                            x0, 
-                                                            polynomial_form = polynomial_form, 
-                                                            method = 'curve_fit')
-    return (x_solution)
 
 
 if __name__ == '__main__' :  
-   
 
-    date = "2023_12_06"
-    
-    M = np.load(f'./{date}/40d_cd/SC37_40_P7R/transfomatrix.npy')
+    date = "2025_04_28"
+    sample = 'SC37_40_4DFIXNR'
+    spform = 332
+    data_folder = f'./{date}/results_calib/Spform_{spform}/'
+    saving_folder = f'./{date}/{sample}/Spform_{spform}/'
 
-    all_pxl, all_pyl = CoordCam(f'./{date}/40d_cd/SC37_40_P7R/left_SC37_40_P7R/', 'maskL.tiff', './test_calib/calib/images_centres_L')
-    all_pxr, all_pyr = CoordCam(f'./{date}/40d_cd/SC37_40_P7R/right_SC37_40_P7R/', 'maskR.tiff', './test_calib/calib/images_centres_R')
-#    all_pxl = np.loadtxt('./2023_08_29/40d_cd/SC37_40_P7NR/px_left.txt', delimiter=' ')
-#    all_pyl = np.loadtxt('./2023_08_29/40d_cd/SC37_40_P7NR/py_left.txt', delimiter=' ')
-#    all_pxr = np.loadtxt('./2023_08_29/40d_cd/SC37_40_P7NR/px_right.txt', delimiter=' ')
-#    all_pyr = np.loadtxt('./2023_08_29/40d_cd/SC37_40_P7NR/py_right.txt', delimiter=' ')
+    if os.path.exists(saving_folder) :
+        ()
+    else :
+        P = pathlib.Path(saving_folder)
+        pathlib.Path.mkdir(P, parents = True)
+
+
+    S_constants0 = np.load(data_folder+'S_constants0.npy')
+    S_constants = np.load(data_folder+'S_constants.npy')
+
+    M = np.load(f'./{date}/transfomatrix.npy')
+
+    ##reverse the right images, cameras are in mirror
+    #Liste_image  = sorted(glob(f'./{date}/{sample}/video_extenso_right/'+"0*"))
+    #for image in Liste_image:
+        #img=cv2.imread(image)
+        #img=cv2.rotate(img,cv2.ROTATE_180)
+        #cv2.imwrite(image,img)
+
+    #all_pxl, all_pyl = CoordCam(f'./{date}/{sample}/video_extenso_left/', 'maskL.tiff', './test_calib/calib/images_centres_L')
+    #np.savetxt(saving_folder + 'all_pxl.txt', all_pxl)
+    #np.savetxt(saving_folder + 'all_pyl.txt', all_pyl)
+
+    all_pxr, all_pyr = CoordCam(f'./{date}/{sample}/video_extenso_right/', 'maskR.tiff', './test_calib/calib/images_centres_R')
+    np.savetxt(saving_folder + 'all_pxr.txt', all_pxr)
+    np.savetxt(saving_folder + 'all_pyr.txt', all_pyr)
+
+    all_pxl = np.loadtxt(saving_folder+'all_pxl.txt', delimiter=' ')
+    all_pyl = np.loadtxt(saving_folder+'all_pyl.txt', delimiter=' ')
+    all_pxr = np.loadtxt(saving_folder+'all_pxr.txt', delimiter=' ')
+    all_pyr = np.loadtxt(saving_folder+'all_pyr.txt', delimiter=' ')
     Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)    
    
 #LA BONNE IDEE
@@ -263,35 +256,45 @@ if __name__ == '__main__' :
 #            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 2: #pour 9 degrés et 20 degrés l=15 cm et 10 degrés l=9cm
 #            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 3: #pour 18 degrés
 #            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 4: #pour 28 degrés et 30 degrés l=20 cm 
-            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 7: #pour 40 degrés et pour 40 degrés l=31 cm
+            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 8: #pour 40 degrés et pour 40 degrés l=31 cm
               Lid.append([Lfalse[j][1], Lfalse[k][1]]) 
     print(len(Lid))
-  for i in range(len(Lp)):
-    Rightbuff = Lp[i][1].copy()
-    for j in range(len(Lid)):
-      Lp[i][1][Lid[j][0]] = Rightbuff[Lid[j][1]]
+    for i in range(len(Lp)):
+      Rightbuff = Lp[i][1].copy()
+      for j in range(len(Lid)):
+        Lp[i][1][Lid[j][0]] = Rightbuff[Lid[j][1]]
 
     
-    Lx3d = []
-    Ly3d = []
-    Lz3d = []  
-    A111 = np.load(f'./{date}/40d_cd/SC37_40_P7R/A111.npy')
-    A_pol = np.load(f'./{date}/40d_cd/SC37_40_P7R/A_pol.npy')
-    polynomial_form = 332
-    for i in range(len(Lp)):
-      Left, Right = Lp[i]      
-      xSoloff_solution = Soloff_identification (Left,
-                                                Right,
-                                                A111, 
-                                                A_pol,
-                                                polynomial_form = polynomial_form,
-                                                method = 'curve_fit')    
-      x,y,z = xSoloff_solution
-      Lx3d.append(x)
-      Ly3d.append(y)
-      Lz3d.append(z)
+      Lx3d = []
+      Ly3d = []
+      Lz3d = []
+      for i in range(len(Lp)):
+        Left, Right = Lp[i]
+        xSoloff_solution = pcs.Soloff_identification (Left,
+                                                      Right,
+                                                      A111,
+                                                      A_pol,
+                                                      Soloff_pform = spform,
+                                                      method = 'curve_fit')
+        x,y,z = xSoloff_solution
+        Lx3d.append(x)
+        Ly3d.append(y)
+        Lz3d.append(z)
  
-    np.savetxt(f'./{date}/40d_cd/SC37_40_P7R/X3d_SC37_40_P7R.txt', Lx3d)
-    np.savetxt(f'./{date}/40d_cd/SC37_40_P7R/Y3d_SC37_40_P7R.txt', Ly3d)
-    np.savetxt(f'./{date}/40d_cd/SC37_40_P7R/Z3d_SC37_40_P7R.txt', Lz3d)
+    np.savetxt(f'./{date}/{sample}/Spform_{spform}/results_id/X3d_SC37_40.txt', Lx3d)
+    np.savetxt(f'./{date}/{sample}/Spform_{spform}/results_id/Y3d_SC37_40.txt', Ly3d)
+    np.savetxt(f'./{date}/{sample}/Spform_{spform}/results_id/Z3d_SC37_40.txt', Lz3d)
 
+
+    fig=plt.figure(figsize=(16,9))
+    ax=plt.axes(projection='3d')
+    ax.grid(visible=True,
+            color='grey',
+            linestyle='-.',
+            linewidth=0.3,
+            alpha=0.2)
+    my_cmap=plt.get_cmap('hsv')
+    sctt=ax.scatter3D(x,y,z, alpha=0.8, c=z, cmap=my_cmap)
+    plt.title('Results')
+    fig.colorbar(sctt, ax=ax, shrink=0.5, aspect=5)
+    plt.show()

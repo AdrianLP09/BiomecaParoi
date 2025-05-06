@@ -13,7 +13,7 @@ import solve_library as solvel
 
 if __name__ == "__main__":
 
-    date = "2025_04_28"
+    date = "2025_05_05"
 
     nZ = 9 #polynomial degree
 
@@ -22,8 +22,8 @@ if __name__ == "__main__":
 
     # Define the inputs
     calibration_dict = {
-      'cam1_folder' : f'./{date}/r',
-      'cam2_folder' : f'./{date}/l',
+      'cam1_folder' : f'./data/SC37_40_4DFIXNR/left_12x12_5',
+      'cam2_folder' : f'./data/SC37_40_4DFIXNR/right_12x12_5',
       'name' : 'calibration',
       'saving_folder' : saving_folder,
       'ncx' : 12,
@@ -31,8 +31,8 @@ if __name__ == "__main__":
       'sqr' : 7.5}  #in mm
 
     DIC_dict={
-      'cam1_folder':f'./{date}/r',
-      'cam2_folder':f'./{date}/l',
+      'cam1_folder':f'./data/SC37_40_4DFIXNR/left_12x12_5',
+      'cam2_folder':f'./data/SC37_40_4DFIXNR/right_12x12_5',
       'name':'identification',
       'saving_folder': saving_folder,
       'window':[[300,1700],[300,1700]]}
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     A_Zernike, Magnification = pcs.Zernike_calibration(z_list = x3_list,
                                                        Zernike_pform = nZ,
                                                        plotting = False,
-                                                       iterations = 10,
+                                                       iterations = 6,
                                                        **calibration_dict)
 
 
