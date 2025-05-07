@@ -1,29 +1,31 @@
 import crappy
-import pycaso as pcs
-import pattern
+import matplotlib.pyplot as plt
 import ft232R #classe InOut pour le Ft232r
 import triggerflow # classes de trigger de l'expérience
-import PolyZernike
+#import PolyZernike
 from glob import glob
 import numpy as np
 import cv2
-import data_library as data
+from Pycaso import pattern
+from Pycaso import data_library as data
+from Pycaso import pycaso as pcs
+from Pycaso import solve_library as solvel
 
 
 
 if __name__ == "__main__":
 
-    date = "2025_04_28"
+    date = "2025_05_05"
 
-    l_pform = 3   #polynomial degree
+    l_pform = 4   #polynomial degree
 
     saving_folder = f'./{date}/results_calib/Lpform_{l_pform}/'
 
 
     # Define the inputs
     calibration_dict = {
-      'cam1_folder' : f'./{date}/r',
-      'cam2_folder' : f'./{date}/l',
+      'cam1_folder' : f'./data/SC37_40_4DFIXNR/left_12x12_5',
+      'cam2_folder' : f'./data/SC37_40_4DFIXNR/right_12x12_5',
       'name' : 'calibration',
       'saving_folder' : saving_folder,
       'ncx' : 12,
@@ -31,8 +33,8 @@ if __name__ == "__main__":
       'sqr' : 7.5}  #in mm
 
     DIC_dict={
-      'cam1_folder':f'./{date}/r',
-      'cam2_folder':f'./{date}/l',
+      'cam1_folder' : f'./data/SC37_40_4DFIXNR/left_12x12_5',
+      'cam2_folder' : f'./data/SC37_40_4DFIXNR/right_12x12_5',
       'name':'identification',
       'saving_folder': saving_folder,
       'window':[[300,1700],[300,1700]]}

@@ -6,13 +6,15 @@ from skimage.measure import label, regionprops
 from skimage.segmentation import clear_border
 from skimage.util import invert
 from glob import glob
+import os
+import sys
+import pathlib
 import cv2
 from math import *
 import math
-import solve_library as solvel
-import data_library as data
-
-import pycaso as pcs
+from Pycaso import solve_library as solvel
+from Pycaso import data_library as data
+from Pycaso import pycaso as pcs
 
 
 def return_num(s: str):
@@ -45,7 +47,7 @@ def CoordCam(path=str, mask=str, savefile=str):
 
     except IndexError:
         image = plt.imread(Liste_image[0])
-        im_mask = plt.imread(Mask)[:,:,0]/255.
+        im_mask = plt.imread(Mask)[:,:]/255.
         print(2)
     print(image.shape,im_mask.shape)
     ################################ First step : spotting the nodes
@@ -158,15 +160,15 @@ def CoordCam(path=str, mask=str, savefile=str):
     #np.savetxt('./2023_08_29/40d_cd/SC37_40_P7NR/py_right.txt', all_py) # save Y
     return all_px, all_py
 
-def f(all_pxr, all_pyr, all_pxl, all_pyl):
+def f(all_pxl, all_pyl, all_pxr, all_pyr):
   LA_allp = []
-  for i in range(len(all_pxr)):
-    A_allp = np.zeros((2,len(all_pxr[0]),2))
-    for j in range(len(all_pxr[0])):
-      A_allp[0][j][0] = all_pyr[i][j]
-      A_allp[0][j][1] = all_pxr[i][j]
-      A_allp[1][j][0] = all_pyl[i][j]
-      A_allp[1][j][1] = all_pxl[i][j]
+  for i in range(len(all_pxl)):
+    A_allp = np.zeros((2,len(all_pxl[0]),2))
+    for j in range(len(all_pxl[0])):
+      A_allp[0][j][0] = all_pyl[i][j]
+      A_allp[0][j][1] = all_pxl[i][j]
+      A_allp[1][j][0] = all_pyr[i][j]
+      A_allp[1][j][1] = all_pxr[i][j]
     LA_allp.append(A_allp)
   return LA_allp
 
@@ -188,19 +190,40 @@ def RtoL_transfo(rightpoints, matrix):
 if __name__ == '__main__' :
 
 
-    date = '2025_04_28'
-    sample = 'SC_37_40_4DFIXNR'
+    date = '2025_05_05'
+    sample = 'SC37_40_4DFIXNR'
     l_pform = 4
 
+    data_folder = f'./{date}/results_calib/Lpform_{l_pform}/'
 
-    saving_folder=f'./{date}/{sample}/Lpform_{l_pform}/'
+    calibration_dict = {
+      'cam1_folder' : f'./data/SC37_40_4DFIXNR/left_12x12_5',
+      'cam2_folder' : f'./data/SC37_40_4DFIXNR/right_12x12_5',
+      'name' : 'calibration',
+      'saving_folder' : data_folder,
+      'ncx' : 12,
+      'ncy' : 12,
+      'sqr' : 7.5}
 
-    M = np.load(f'./{date}/{sample}/transfomatrix.npy')
+    saving_folder = f'./{date}/{sample}/'
 
-    L_constants=np.load(f'./{date}/results_calib/Lpform_{l_pform}/L_constants.npy')
+    if os.path.exists(saving_folder) :
+        ()
+    else :
+        P = pathlib.Path(saving_folder)
+        pathlib.Path.mkdir(P, parents = True)
 
 
+    if os.path.exists(saving_folder+f'Lpform_{l_pform}/') :
+        ()
+    else :
+        P = pathlib.Path(saving_folder+f'Lpform_{l_pform}/')
+        pathlib.Path.mkdir(P, parents = True)
 
+
+    M = np.load(f'./{date}/results_calib/transfomatrix.npy')
+    L_constants = np.load(data_folder + 'L_constants.npy')
+    C_dim = data.cameras_size(**calibration_dict)
 
     ##reverse the right images, cameras are in mirror
     #Liste_image  = sorted(glob(f'./{date}/{sample}/video_extenso_right/'+"0*"))
@@ -209,22 +232,20 @@ if __name__ == '__main__' :
         #img=cv2.rotate(img,cv2.ROTATE_180)
         #cv2.imwrite(image,img)
 
+    #all_pxl, all_pyl = CoordCam(f'./data/SC37_40_4DFIXNR/left_SC37_40_4DFIXNR/', 'maskL.tiff')
+    #np.save(saving_folder + 'all_pxl.npy', all_pxl)
+    #np.save(saving_folder + 'all_pyl.npy', all_pyl)
 
-    all_pxl, all_pyl = CoordCam(f'./{date}/{sample}/video_extenso_left/', 'maskL.tiff')
-    np.save(saving_folder + 'all_pxl.npy', all_pxl)
-    np.save(saving_folder + 'all_pyl.npy', all_pyl)
+    #all_pxr, all_pyr = CoordCam(f'./data/SC37_40_4DFIXNR/right_SC37_40_4DFIXNR/', 'maskR.tiff')
+    #np.save(saving_folder + 'all_pxr.npy', all_pxr)
+    #np.save(saving_folder + 'all_pyr.npy', all_pyr)
 
-    all_pxr, all_pyr = CoordCam(f'./{date}/{sample}/video_extenso_right/', 'maskR.tiff')
-    np.save(saving_folder + 'all_pxr.npy', all_pxr)
-    np.save(saving_folder + 'all_pyr.npy', all_pyr)
+    all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
+    all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
+    all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
+    all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
+    Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)
 
-    #all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
-    #all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
-    #all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
-    #all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
-    Lp = f(all_pxr, all_pyr, all_pxl, all_pyl)
-
-    Lrp = RtoL_transfo(Lp[0][0], M)
 
 #LA BONNE IDEE
     Lrp = RtoL_transfo(Lp[0][1], M)
@@ -268,9 +289,9 @@ if __name__ == '__main__' :
 
 
     for i in range(len(Lp)):
-        Right,Left = Lp[i]
-        L_solution = pcs.Lagrange_identification (Right,
-                                                  Left,
+        Left,Right= Lp[i]
+        L_solution = pcs.Lagrange_identification (Left,
+                                                  Right,
                                                   L_constants,
                                                   l_pform)
 
@@ -278,11 +299,21 @@ if __name__ == '__main__' :
         Lx3d.append(x)
         Ly3d.append(y)
         Lz3d.append(z)
+    print(len(Lx3d))
 
+    np.savetxt(saving_folder+f'Lpform_{l_pform}/X3d_SC37_40.txt', Lx3d)
+    np.savetxt(saving_folder+f'Lpform_{l_pform}/Y3d_SC37_40.txt', Ly3d)
+    np.savetxt(saving_folder+f'Lpform_{l_pform}/Z3d_SC37_40.txt', Lz3d)
 
-    print(Lx3d,Ly3d,Lz3d)
-    np.savetxt(saving_folder+'results_id/'+'Lx3d.npy', Lx3d)
-    np.savetxt(saving_folder+'results_id/'+'Ly3d.npy', Ly3d)
-    np.savetxt(saving_folder+'results_id/'+'Lz3d.npy', Lz3d)
-
-
+    fig=plt.figure(figsize=(16,9))
+    ax=plt.axes(projection='3d')
+    ax.grid(visible=True,
+            color='grey',
+            linestyle='-.',
+            linewidth=0.3,
+            alpha=0.2)
+    my_cmap=plt.get_cmap('hsv')
+    sctt=ax.scatter3D(x,y,z, alpha=0.8, c=z, cmap=my_cmap)
+    plt.title('Results')
+    fig.colorbar(sctt, ax=ax, shrink=0.5, aspect=5)
+    plt.show()

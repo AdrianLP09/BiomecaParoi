@@ -44,17 +44,14 @@ def CoordCam(path=str, mask=str, savefile=str):
   Min_area = 10 #used to delete small and fake detected spots
   pix = 10 # pixel margin to the ZOI bounding box
   try:
-    image = plt.imread(Liste_image[0])[:,:,0]
-    im_mask = plt.imread(Mask)[:,:,0]/255.
-  ################################ First step : spotting the nodes
-    img = invert(difference_of_gaussians(image, 5, 6))
-    thresh = threshold_otsu(img[np.where(im_mask == 1)])
-  except IndexError:
     image = plt.imread(Liste_image[0])
+    im_mask = plt.imread(Mask)[:,:,0]/255.
+  except IndexError:
+    image = plt.imread(Liste_image[0])[:,:,0]
     im_mask = plt.imread(Mask)[:,:]/255.
-################################ First step : spotting the nodes
-    img = invert(difference_of_gaussians(image, 5, 6))
-    thresh = threshold_otsu(img[np.where(im_mask == 1)[:2]])
+  ################################ First step : spotting the nodes
+  img = invert(difference_of_gaussians(image, 5, 6))
+  thresh = threshold_otsu(img[np.where(im_mask == 1)])
   imgb = img>thresh
   imgb[np.where(im_mask ==0)] = 0
   #plt.figure(); plt.imshow(imgb);plt.show()
@@ -194,7 +191,7 @@ if __name__ == '__main__' :
     sample = 'SC37_40_4DFIXNR'
     spform = 332
     data_folder = f'./{date}/results_calib/Spform_{spform}/'
-    saving_folder = f'./{date}/{sample}/Spform_{spform}/'
+    saving_folder = f'./{date}/{sample}/'
 
     if os.path.exists(saving_folder) :
         ()
@@ -223,12 +220,12 @@ if __name__ == '__main__' :
     np.savetxt(saving_folder + 'all_pxr.txt', all_pxr)
     np.savetxt(saving_folder + 'all_pyr.txt', all_pyr)
 
-    all_pxl = np.loadtxt(saving_folder+'all_pxl.txt', delimiter=' ')
-    all_pyl = np.loadtxt(saving_folder+'all_pyl.txt', delimiter=' ')
-    all_pxr = np.loadtxt(saving_folder+'all_pxr.txt', delimiter=' ')
-    all_pyr = np.loadtxt(saving_folder+'all_pyr.txt', delimiter=' ')
-    Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)    
-   
+    all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
+    all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
+    all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
+    all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
+    Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)
+
 #LA BONNE IDEE
     Lrp = RtoL_transfo(Lp[0][1], M)
     Lfalse = []
@@ -272,8 +269,8 @@ if __name__ == '__main__' :
         Left, Right = Lp[i]
         xSoloff_solution = pcs.Soloff_identification (Left,
                                                       Right,
-                                                      A111,
-                                                      A_pol,
+                                                      S_constants0,
+                                                      S_constants,
                                                       Soloff_pform = spform,
                                                       method = 'curve_fit')
         x,y,z = xSoloff_solution
@@ -281,9 +278,9 @@ if __name__ == '__main__' :
         Ly3d.append(y)
         Lz3d.append(z)
  
-    np.savetxt(f'./{date}/{sample}/Spform_{spform}/results_id/X3d_SC37_40.txt', Lx3d)
-    np.savetxt(f'./{date}/{sample}/Spform_{spform}/results_id/Y3d_SC37_40.txt', Ly3d)
-    np.savetxt(f'./{date}/{sample}/Spform_{spform}/results_id/Z3d_SC37_40.txt', Lz3d)
+    np.savetxt(saving_folder + f'Spform_{spform}/X3d_SC37_40.txt', Lx3d)
+    np.savetxt(saving_folder + f'Spform_{spform}/Y3d_SC37_40.txt', Ly3d)
+    np.savetxt(saving_folder + f'Spform_{spform}/Z3d_SC37_40.txt', Lz3d)
 
 
     fig=plt.figure(figsize=(16,9))

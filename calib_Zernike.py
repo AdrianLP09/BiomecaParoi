@@ -1,21 +1,21 @@
 import crappy
-import pycaso as pcs
-import pattern
+import matplotlib.pyplot as plt
 import ft232R #classe InOut pour le Ft232r
 import triggerflow # classes de trigger de l'expérience
-import PolyZernike
+#import PolyZernike
 from glob import glob
 import numpy as np
 import cv2
-import data_library as data
-import matplotlib.pyplot as plt
-import solve_library as solvel
+from Pycaso import pattern
+from Pycaso import data_library as data
+from Pycaso import pycaso as pcs
+from Pycaso import solve_library as solvel
 
 if __name__ == "__main__":
 
     date = "2025_05_05"
 
-    nZ = 9 #polynomial degree
+    nZ = 12 #polynomial degree
 
     saving_folder = f'./{date}/results_calib/nZ_{nZ}/'
 

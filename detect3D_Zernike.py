@@ -191,7 +191,7 @@ if __name__=='__main__':
 
     date = '2025_05_05'
     sample = 'SC37_40_4DFIXNR'
-    nZ = 9
+    nZ = 12
     data_folder = f'./{date}/results_calib/nZ_{nZ}/'
 
     calibration_dict = {
@@ -203,7 +203,7 @@ if __name__=='__main__':
       'ncy' : 12,
       'sqr' : 7.5}  #in mm
 
-    saving_folder=f'./{date}/{sample}/nZ_{nZ}/'
+    saving_folder=f'./{date}/{sample}/'
 
     if os.path.exists(saving_folder) :
         ()
@@ -212,11 +212,19 @@ if __name__=='__main__':
         pathlib.Path.mkdir(P, parents = True)
 
 
+    if os.path.exists(saving_folder+f'nZ_{nZ}/') :
+        ()
+    else :
+        P = pathlib.Path(saving_folder+f'nZ_{nZ}/')
+        pathlib.Path.mkdir(P, parents = True)
+
+
+
     M = np.load(f'./{date}/results_calib/transfomatrix.npy')
 
-    A_constant=np.load(data_folder+'A_Zernike.npy')
+    A_constant = np.load(data_folder+'A_Zernike.npy')
 
-    C_dim=data.cameras_size(**calibration_dict)
+    C_dim = data.cameras_size(**calibration_dict)
 
     ##reverse the right images, cameras are in mirror
     #Liste_image  = sorted(glob(f'./{date}/{sample}/video_extenso_right/'+"0*"))
@@ -240,7 +248,8 @@ if __name__=='__main__':
     Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)
 
 
-    Lrp = RtoL_transfo(Lp[0][0], M)
+#LA BONNE IDEE
+    Lrp = RtoL_transfo(Lp[0][1], M)
     Lfalse = []
     for j in range(len(Lrp)):
 #      if Lp[0][0][j][0] - Lrp[j][0] > 40 or Lp[0][0][j][0] - Lrp[j][0] < 20: #pour 9 degrés et 10 degrés l=9cm
@@ -280,9 +289,9 @@ if __name__=='__main__':
     Lz3d = []
 
     for i in range(len(Lp)):
-        Right, Left = Lp[i]
-        Z_solution = pcs.Zernike_identification(Right,
-                                                Left,
+        Left, Right= Lp[i]
+        Z_solution = pcs.Zernike_identification(Left,
+                                                Right,
                                                 A_constant,
                                                 nZ,
                                                 C_dim)
@@ -292,9 +301,9 @@ if __name__=='__main__':
         Lz3d.append(z)
     print(Lx3d,Ly3d,Lz3d)
 
-    np.savetxt(f'./{date}/{sample}/nZ_{nZ}/results_id/X3d_SC37_40.txt', Lx3d)
-    np.savetxt(f'./{date}/{sample}/nZ_{nZ}/results_id/Y3d_SC37_40.txt', Ly3d)
-    np.savetxt(f'./{date}/{sample}/nZ_{nZ}/results_id/Z3d_SC37_40.txt', Lz3d)
+    np.savetxt(saving_folder + f'nZ_{nZ}/X3d_SC37_40.txt', Lx3d)
+    np.savetxt(saving_folder + f'nZ_{nZ}/Y3d_SC37_40.txt', Ly3d)
+    np.savetxt(saving_folder + f'nZ_{nZ}/Z3d_SC37_40.txt', Lz3d)
 
     fig=plt.figure(figsize=(16,9))
     ax=plt.axes(projection='3d')
