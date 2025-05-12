@@ -26,12 +26,12 @@ def return_num(s: str):
     return num
 
 def CoordCam(path=str, mask=str, savefile=str):
-#  Liste_image  = sorted(glob(path+"*.tiff"), key=return_num) #list of image
-#  if len(Liste_image)>1:
-#    Liste_image = Liste_image[:15]
-#  else:
-#    print('PAS DE MASK')
-#    return
+    #  Liste_image  = sorted(glob(path+"*.tiff"), key=return_num) #list of image
+    #  if len(Liste_image)>1:
+    #    Liste_image = Liste_image[:15]
+    #  else:
+    #    print('PAS DE MASK')
+    #    return
     Liste_image  = sorted(glob(path+"0*")) #list of image
     #  Liste_image = Liste_image[::7]
     Mask = path + mask # mask defined from the first image
@@ -40,16 +40,17 @@ def CoordCam(path=str, mask=str, savefile=str):
     impair_coeff = 1. # impairs the thresh level for global binarization of spots
     Min_area = 10 #used to delete small and fake detected spots
     pix = 10 # pixel margin to the ZOI bounding box
-    try:
-        image = plt.imread(Liste_image[0])[:,:,0]
-        im_mask = plt.imread(Mask)[:,:,0]/255.
-        print(1)
+    image_raw = plt.imread(Liste_image[0])
+    if image_raw.ndim == 3:
+        image = image_raw[:,:,0]  # ou moyenne des canaux: np.mean(image_raw, axis=2)
+    else:
+        image = image_raw
 
-    except IndexError:
-        image = plt.imread(Liste_image[0])
-        im_mask = plt.imread(Mask)[:,:]/255.
-        print(2)
-    print(image.shape,im_mask.shape)
+    mask_raw = plt.imread(Mask)
+    if mask_raw.ndim == 3:
+        im_mask = mask_raw[:,:,0]/255.
+    else:
+        im_mask = mask_raw/255.
     ################################ First step : spotting the nodes
     img = invert(difference_of_gaussians(image, 5, 6))
     thresh = threshold_otsu(img[np.where(im_mask == 1)])
@@ -69,8 +70,7 @@ def CoordCam(path=str, mask=str, savefile=str):
         barx[i], bary[i]=region.centroid
         areas[i]=region.area
         bar[i] = region.centroid
-
-    vire = np.where((areas <100)|(areas>1800)) # je vire les points trop petits et les trop gros
+    vire = np.where((areas <100)|(areas>1000)) # je vire les points trop petits et les trop gros
     boundbox=np.delete(boundbox,vire)
     bar=np.delete(bar,vire)
     areas=np.delete(areas,vire)
@@ -84,7 +84,8 @@ def CoordCam(path=str, mask=str, savefile=str):
         minr, minc, maxr, maxc=boundbox[i] # bbox of each ZOI
         ax.plot(gy,gx, 'ro', markersize=6)
         minr, minc, maxr, maxc = boundbox[i]
-        rect = mpatches.Rectangle((minc, minr), maxc - minc, maxr - minr, fill=False, edgecolor='red', linewidth=2)
+        rect = mpatches.Rectangle((minc, minr), maxc - minc, maxr - minr,
+                                    fill=False, edgecolor='red', linewidth=2)
         ax.add_patch(rect)
     all_px=np.vstack([barx]) # je cree des tableaux dans lequel je stocke les positions en X et en Y
     all_py=np.vstack([bary])
@@ -92,11 +93,7 @@ def CoordCam(path=str, mask=str, savefile=str):
     ##### Second step - iteration : ROI localization on the following images
     for j in np.arange(1, len(Liste_image), 1):
         print(j)
-        try:
-            image = plt.imread(Liste_image[j])[:,:,0]
-        except:
-            image = plt.imread(Liste_image[j])
-        print(image.shape)
+        image = plt.imread(Liste_image[j])
         img = invert(difference_of_gaussians(image, 5,6))
         #    img = invert(image)
         fig, ax = plt.subplots()
@@ -123,6 +120,8 @@ def CoordCam(path=str, mask=str, savefile=str):
                 if minc < pix:
                     minc = pix
                 invar_ZOI = (img[minr-pix:maxr+pix, minc-pix:maxc+pix])
+                #if invar_ZOI.ndim == 3:
+                    #invar_ZOI = rgb2gray(invar_ZOI)
                 thresh = threshold_otsu(invar_ZOI)
                 invar_ZOI = invar_ZOI>thresh
                 label_img = label(255.*invar_ZOI)
@@ -150,14 +149,16 @@ def CoordCam(path=str, mask=str, savefile=str):
                     barx[i]=np.float('nan')
                     bary[i]=np.float('nan')
                 ax.plot(ppy,ppx,'ro',markersize=1)
+        if j==136:
+            plt.show()
         #plt.savefig(savefile + '/img_%06d.png'%j,dpi=150)
         plt.close()
         all_px = np.vstack([all_px, barx])
         ## add updated X coord of all ZOI to previous ones
         all_py = np.vstack([all_py, bary])
         ## add updated Y coord of all updated ZOI to previous ones
-    #np.savetxt('./2023_08_29/40d_cd/SC37_40_P7NR/px_right.txt', all_px) # save X
-    #np.savetxt('./2023_08_29/40d_cd/SC37_40_P7NR/py_right.txt', all_py) # save Y
+        #  np.savetxt('./2023_08_29/40d_cd/SC37_40_P7NR/px_right.txt', all_px) # save X
+        #  np.savetxt('./2023_08_29/40d_cd/SC37_40_P7NR/py_right.txt', all_py) # save Y
     return all_px, all_py
 
 def f(all_pxl, all_pyl, all_pxr, all_pyr):
@@ -189,14 +190,14 @@ def RtoL_transfo(rightpoints, matrix):
 
 if __name__=='__main__':
 
-    date = '2025_05_05'
-    sample = 'SC37_40_4DFIXNR'
+    date = '2025_05_09'
+    sample = 'SC37_40_A1L'
     nZ = 12
     data_folder = f'./{date}/results_calib/nZ_{nZ}/'
 
     calibration_dict = {
-      'cam1_folder' : f'./data/SC37_40_4DFIXNR/left_12x12_5',
-      'cam2_folder' : f'./data/SC37_40_4DFIXNR/right_12x12_5',
+      'cam1_folder' : f'./{date}/video_extenso_left/',
+      'cam2_folder' : f'./{date}/video_extenso_right/',
       'name' : 'calibration',
       'saving_folder' : data_folder,
       'ncx' : 12,
@@ -220,7 +221,7 @@ if __name__=='__main__':
 
 
 
-    M = np.load(f'./{date}/results_calib/transfomatrix.npy')
+    M = np.load(f'./{date}/{sample}/transfomatrix.npy')
 
     A_constant = np.load(data_folder+'A_Zernike.npy')
 
@@ -233,11 +234,11 @@ if __name__=='__main__':
         #img=cv2.rotate(img,cv2.ROTATE_180)
         #cv2.imwrite(image,img)
 
-    #all_pxl, all_pyl = CoordCam(f'./data/SC37_40_4DFIXNR/left_SC37_40_4DFIXNR/', 'maskL.tiff')
+    #all_pxl, all_pyl = CoordCam(f'./{date}/video_extenso_left/', 'maskL.tiff',saving_folder)
     #np.save(saving_folder + 'all_pxl.npy', all_pxl)
     #np.save(saving_folder + 'all_pyl.npy', all_pyl)
 
-    #all_pxr, all_pyr = CoordCam(f'./data/SC37_40_4DFIXNR/right_SC37_40_4DFIXNR/', 'maskR.tiff')
+    #all_pxr, all_pyr = CoordCam(f'./{date}/video_extenso_right/', 'maskR.tiff')
     #np.save(saving_folder + 'all_pxr.npy', all_pxr)
     #np.save(saving_folder + 'all_pyr.npy', all_pyr)
 
@@ -253,12 +254,12 @@ if __name__=='__main__':
     Lfalse = []
     for j in range(len(Lrp)):
 #      if Lp[0][0][j][0] - Lrp[j][0] > 40 or Lp[0][0][j][0] - Lrp[j][0] < 20: #pour 9 degrés et 10 degrés l=9cm
-#      if Lp[0][0][j][0] - Lrp[j][0] > 90 or Lp[0][0][j][0] - Lrp[j][0] < 70: #pour 18 degrés
+      if Lp[0][0][j][0] - Lrp[j][0] > 90 or Lp[0][0][j][0] - Lrp[j][0] < 70: #pour 18 degrés
 #      if Lp[0][0][j][0] - Lrp[j][0] > 60 or Lp[0][0][j][0] - Lrp[j][0] < 40: #pour 20 degrés l=15 cm
 #      if Lp[0][0][j][0] - Lrp[j][0] > 115 or Lp[0][0][j][0] - Lrp[j][0] < 90: #pour 28 degrés
 #      if Lp[0][0][j][0] - Lrp[j][0] > 80 or Lp[0][0][j][0] - Lrp[j][0] < 60: #pour 30 degrés l=20 cm
 #      if Lp[0][0][j][0] - Lrp[j][0] > 140 or Lp[0][0][j][0] - Lrp[j][0] < 120: #pour 40 degrés
-      if Lp[0][0][j][0] - Lrp[j][0] > 160 or Lp[0][0][j][0] - Lrp[j][0] < 130: #pour 40 degrés l=31 cm
+#      if Lp[0][0][j][0] - Lrp[j][0] > 160 or Lp[0][0][j][0] - Lrp[j][0] < 130: #pour 40 degrés l=31 cm
 #      if Lp[0][0][j][0] - Lrp[j][0] > 190 or Lp[0][0][j][0] - Lrp[j][0] < 140:
         Lfalse.append([Lrp[j], j])
     print(len(Lfalse))
@@ -296,14 +297,17 @@ if __name__=='__main__':
                                                 nZ,
                                                 C_dim)
         x,y,z = Z_solution
+        #x=np.flip(x)
+        #y=np.flip(y)
+        #z=np.flip(z)
         Lx3d.append(x)
         Ly3d.append(y)
         Lz3d.append(z)
-    print(Lx3d,Ly3d,Lz3d)
+    print(x,y,z)
 
-    np.savetxt(saving_folder + f'nZ_{nZ}/X3d_SC37_40.txt', Lx3d)
-    np.savetxt(saving_folder + f'nZ_{nZ}/Y3d_SC37_40.txt', Ly3d)
-    np.savetxt(saving_folder + f'nZ_{nZ}/Z3d_SC37_40.txt', Lz3d)
+    np.savetxt(saving_folder + f'nZ_{nZ}/X3d.txt', Lx3d)
+    np.savetxt(saving_folder + f'nZ_{nZ}/Y3d.txt', Ly3d)
+    np.savetxt(saving_folder + f'nZ_{nZ}/Z3d.txt', Lz3d)
 
     fig=plt.figure(figsize=(16,9))
     ax=plt.axes(projection='3d')

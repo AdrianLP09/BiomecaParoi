@@ -150,7 +150,7 @@ def CoordCam(path=str, mask=str, savefile=str):
                     barx[i]=np.float('nan')
                     bary[i]=np.float('nan')
                 ax.plot(ppy,ppx,'ro',markersize=1)
-        #plt.savefig(savefile + '/img_%06d.png'%j,dpi=150)
+        plt.savefig(savefile + '/img_%06d.png'%j,dpi=150)
         plt.close()
         all_px = np.vstack([all_px, barx])
         ## add updated X coord of all ZOI to previous ones
@@ -232,13 +232,13 @@ if __name__ == '__main__' :
         #img=cv2.rotate(img,cv2.ROTATE_180)
         #cv2.imwrite(image,img)
 
-    #all_pxl, all_pyl = CoordCam(f'./data/SC37_40_4DFIXNR/left_SC37_40_4DFIXNR/', 'maskL.tiff')
-    #np.save(saving_folder + 'all_pxl.npy', all_pxl)
-    #np.save(saving_folder + 'all_pyl.npy', all_pyl)
+    all_pxl, all_pyl = CoordCam(f'./data/SC37_40_4DFIXNR/left_SC37_40_4DFIXNR/', 'maskL.tiff')
+    np.save(saving_folder + 'all_pxl.npy', all_pxl)
+    np.save(saving_folder + 'all_pyl.npy', all_pyl)
 
-    #all_pxr, all_pyr = CoordCam(f'./data/SC37_40_4DFIXNR/right_SC37_40_4DFIXNR/', 'maskR.tiff')
-    #np.save(saving_folder + 'all_pxr.npy', all_pxr)
-    #np.save(saving_folder + 'all_pyr.npy', all_pyr)
+    all_pxr, all_pyr = CoordCam(f'./data/SC37_40_4DFIXNR/right_SC37_40_4DFIXNR/', 'maskR.tiff')
+    np.save(saving_folder + 'all_pxr.npy', all_pxr)
+    np.save(saving_folder + 'all_pyr.npy', all_pyr)
 
     all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
     all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)

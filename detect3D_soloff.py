@@ -5,6 +5,7 @@ from skimage.filters import threshold_otsu, difference_of_gaussians
 from skimage.measure import label, regionprops
 from skimage.segmentation import clear_border
 from skimage.util import invert
+from skimage.color import rgb2gray
 from glob import glob
 import os
 import sys
@@ -43,12 +44,17 @@ def CoordCam(path=str, mask=str, savefile=str):
   impair_coeff = 1. # impairs the thresh level for global binarization of spots
   Min_area = 10 #used to delete small and fake detected spots
   pix = 10 # pixel margin to the ZOI bounding box
-  try:
-    image = plt.imread(Liste_image[0])
-    im_mask = plt.imread(Mask)[:,:,0]/255.
-  except IndexError:
-    image = plt.imread(Liste_image[0])[:,:,0]
-    im_mask = plt.imread(Mask)[:,:]/255.
+  image_raw = plt.imread(Liste_image[0])
+  if image_raw.ndim == 3:
+      image = image_raw[:,:,0]  # ou moyenne des canaux: np.mean(image_raw, axis=2)
+  else:
+      image = image_raw
+
+  mask_raw = plt.imread(Mask)
+  if mask_raw.ndim == 3:
+      im_mask = mask_raw[:,:,0]/255.
+  else:
+      im_mask = mask_raw/255.
   ################################ First step : spotting the nodes
   img = invert(difference_of_gaussians(image, 5, 6))
   thresh = threshold_otsu(img[np.where(im_mask == 1)])
@@ -118,6 +124,8 @@ def CoordCam(path=str, mask=str, savefile=str):
         if minc < pix:
           minc = pix
         invar_ZOI = (img[minr-pix:maxr+pix, minc-pix:maxc+pix])
+        if invar_ZOI.ndim == 3:
+          invar_ZOI = rgb2gray(invar_ZOI)
         thresh = threshold_otsu(invar_ZOI)
         invar_ZOI = invar_ZOI>thresh
         label_img = label(255.*invar_ZOI)
@@ -157,9 +165,9 @@ def CoordCam(path=str, mask=str, savefile=str):
 
 def f(all_pxl, all_pyl, all_pxr, all_pyr):
   LA_allp = []
-  for i in range(len(all_pxl)):
-    A_allp = np.zeros((2,len(all_pxl[0]),2))
-    for j in range(len(all_pxl[0])):
+  for i in range(len(all_pyr)):
+    A_allp = np.zeros((2,len(all_pyr[0]),2))
+    for j in range(len(all_pyr[0])):
       A_allp[0][j][0] = all_pyl[i][j]
       A_allp[0][j][1] = all_pxl[i][j]
       A_allp[1][j][0] = all_pyr[i][j]
@@ -212,18 +220,19 @@ if __name__ == '__main__' :
         #img=cv2.rotate(img,cv2.ROTATE_180)
         #cv2.imwrite(image,img)
 
-    #all_pxl, all_pyl = CoordCam(f'./{date}/{sample}/video_extenso_left/', 'maskL.tiff', './test_calib/calib/images_centres_L')
-    #np.savetxt(saving_folder + 'all_pxl.txt', all_pxl)
-    #np.savetxt(saving_folder + 'all_pyl.txt', all_pyl)
+    all_pxl, all_pyl = CoordCam(f'./{date}/{sample}/video_extenso_left/', 'maskL.tiff', './test_calib/calib/images_centres_L')
+    np.save(saving_folder + 'all_pxl.npy', all_pxl)
+    np.save(saving_folder + 'all_pyl.npy', all_pyl)
 
     all_pxr, all_pyr = CoordCam(f'./{date}/{sample}/video_extenso_right/', 'maskR.tiff', './test_calib/calib/images_centres_R')
-    np.savetxt(saving_folder + 'all_pxr.txt', all_pxr)
-    np.savetxt(saving_folder + 'all_pyr.txt', all_pyr)
+    np.save(saving_folder + 'all_pxr.npy', all_pxr)
+    np.save(saving_folder + 'all_pyr.npy', all_pyr)
 
     all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
     all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
     all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
     all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
+    print(all_pyr.shape, all_pyl.shape, all_pxr.shape, all_pxl.shape)
     Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)
 
 #LA BONNE IDEE
