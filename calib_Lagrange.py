@@ -15,7 +15,7 @@ from Pycaso import solve_library as solvel
 
 if __name__ == "__main__":
 
-    date = "2025_05_05"
+    date = "2025_05_15"
 
     l_pform = 4   #polynomial degree
 
@@ -24,18 +24,18 @@ if __name__ == "__main__":
 
     # Define the inputs
     calibration_dict = {
-      'cam1_folder' : f'./data/SC37_40_4DFIXNR/left_12x12_5',
-      'cam2_folder' : f'./data/SC37_40_4DFIXNR/right_12x12_5',
+      'cam1_folder' : f'./{date}/l',
+      'cam2_folder' : f'./{date}/r',
       'name' : 'calibration',
       'saving_folder' : saving_folder,
       'ncx' : 12,
       'ncy' : 12,
       'sqr' : 7.5}  #in mm
 
+
     DIC_dict={
-      'cam1_folder' : f'./data/SC37_40_4DFIXNR/left_12x12_5',
-      'cam2_folder' : f'./data/SC37_40_4DFIXNR/right_12x12_5',
-      'name':'identification',
+      'cam1_folder' : f'./{date}/l',
+      'cam2_folder' : f'./{date}/r',
       'saving_folder': saving_folder,
       'window':[[300,1700],[300,1700]]}
 
@@ -71,13 +71,13 @@ if __name__ == "__main__":
     np.save(saving_folder+'L_constants.npy', L_constants)
 
 
-    X1,X2 = data.DIC_get_positions(DIC_dict)
+    #X1,X2 = data.DIC_get_positions(DIC_dict)
 
-    Lagrange_results = pcs.Lagrange_identification(X1[0],
-                                                   X2[0],
-                                                   L_constants,
-                                                   l_pform)
+    #Lagrange_results = pcs.Lagrange_identification(X1[0],
+                                                   #X2[0],
+                                                   #L_constants,
+                                                   #l_pform)
 
-    np.save(f'./{date}/results_calib/Lpform_{l_pform}/Lagrange_results.npy', Lagrange_results)
-    print(Lagrange_results)
+    #np.save(f'./{date}/results_calib/Lpform_{l_pform}/Lagrange_results.npy', Lagrange_results)
+    #print(Lagrange_results)
 

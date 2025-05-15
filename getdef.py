@@ -5,11 +5,13 @@ from glob import glob
 from math import *
 from scipy.optimize import least_squares
 
-date = '2025_04_28'
-sili = 'SC_37_40'
-tricot = '4DFIXNR'
-nZ = 9
+date = '2025_05_15'
+sili = 'SC37_40'
+tricot = 'A1L'
+nZ = 5
 l_pform = 4
+spform=332
+
 method_dict = {'Zernike','Lagrange','Soloff'}
 method = input('Choose a method\n')
 if not method in method_dict:
@@ -22,11 +24,11 @@ if method == 'Zernike':
    polform = f'nZ_{nZ}'
 
 if method == 'Soloff':
-   polform = f'Spform_{Spform}'
+   polform = f'Spform_{spform}'
 
-X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Lx3d.npy', delimiter=' ')
-Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Ly3d.npy', delimiter=' ')
-Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Lz3d.npy', delimiter=' ')
+X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/X3d.txt', delimiter=' ')
+Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/Y3d.txt', delimiter=' ')
+Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/Z3d.txt', delimiter=' ')
 
 
 #Création du maillage

@@ -95,13 +95,13 @@ def RtoL_transfo_Matrix(leftpoints, rightpoints):
 if __name__ == '__main__' :  
 
 
-    date = "2025_04_28"
-    sample= "SC_37_40_4DFIXNR"
+    date = "2025_05_15"
+    sample= "SC37_40_A1L"
     #all_pxl, all_pyl = CoordCam(f'./{date}/matrix_calibL/', 'maskL_calib.tiff')
     #all_pxr, all_pyr = CoordCam(f'./{date}/matrix_calibR/', 'maskR_calib.tiff')
 
-    all_pxl, all_pyl = CoordCam(f'./{date}/{sample}/Essai_3/video_extenso_left/', 'maskL.tiff')
-    all_pxr, all_pyr = CoordCam(f'./{date}/{sample}/Essai_3/video_extenso_right/', 'maskR.tiff')
+    all_pxl, all_pyl = CoordCam(f'./{date}/matrix_calibL/', 'maskL.tiff')
+    all_pxr, all_pyr = CoordCam(f'./{date}/matrix_calibR/', 'maskR.tiff')
 
     print(all_pxl, all_pyl, all_pxr, all_pyr)
     Lpc = f(all_pxl, all_pyl, all_pxr, all_pyr)
@@ -109,6 +109,6 @@ if __name__ == '__main__' :
 
     #np.save(f'./{date}/transfomatrix', M)
 
-    np.save(f'./{date}/{sample}/Essai_3/transfomatrix', M)
+    np.save(f'./{date}/{sample}/transfomatrix', M)
 
 

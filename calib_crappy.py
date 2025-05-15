@@ -5,14 +5,13 @@ import moteur
 import ft232R
 import os 
 from glob import glob
-import pycaso as pcs
 import numpy as np
 
 
 
 
 if __name__ == '__main__':
-  date = "2025_04_28"
+  date = "2025_05_15"
 
 
 
@@ -48,7 +47,7 @@ if __name__ == '__main__':
                                 'position_label': 'position',
                                 'speed': 100,
                                 'port': '/dev/ttyACM0'}],
-                              freq=50)
+                                freq=50)
 
 
   gen_ft = crappy.blocks.Generator([{'type': 'Cyclic',

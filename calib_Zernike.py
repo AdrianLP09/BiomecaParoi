@@ -13,17 +13,17 @@ from Pycaso import solve_library as solvel
 
 if __name__ == "__main__":
 
-    date = "2025_05_05"
+    date = "2025_05_15"
 
-    nZ = 12 #polynomial degree
+    nZ = 5 #polynomial degree
 
     saving_folder = f'./{date}/results_calib/nZ_{nZ}/'
 
 
     # Define the inputs
     calibration_dict = {
-      'cam1_folder' : f'./data/SC37_40_4DFIXNR/left_12x12_5',
-      'cam2_folder' : f'./data/SC37_40_4DFIXNR/right_12x12_5',
+      'cam1_folder' : f'./{date}/l',
+      'cam2_folder' : f'./{date}/r',
       'name' : 'calibration',
       'saving_folder' : saving_folder,
       'ncx' : 12,
@@ -31,9 +31,8 @@ if __name__ == "__main__":
       'sqr' : 7.5}  #in mm
 
     DIC_dict={
-      'cam1_folder':f'./data/SC37_40_4DFIXNR/left_12x12_5',
-      'cam2_folder':f'./data/SC37_40_4DFIXNR/right_12x12_5',
-      'name':'identification',
+      'cam1_folder' : f'./{date}/l',
+      'cam2_folder' : f'./{date}/r',
       'saving_folder': saving_folder,
       'window':[[300,1700],[300,1700]]}
 
@@ -50,7 +49,7 @@ if __name__ == "__main__":
     print('Zernike method - Start calibration')
     print('#####       ')
 
-    ##reverse the right images, cameras are in mirror
+    #reverse the right images, cameras are in mirror
     #Liste_image  = sorted(glob(f'./{date}/r/'+"0*"))
     #for image in Liste_image:
       #img=cv2.imread(image)
@@ -64,7 +63,7 @@ if __name__ == "__main__":
     A_Zernike, Magnification = pcs.Zernike_calibration(z_list = x3_list,
                                                        Zernike_pform = nZ,
                                                        plotting = False,
-                                                       iterations = 6,
+                                                       iterations = 10,
                                                        **calibration_dict)
 
 
@@ -93,27 +92,6 @@ if __name__ == "__main__":
     ax.set_zlabel('Z')
     plt.show()
 
-
-
-    #try:
-      #z_list=np.load(f'./{date}/nZ_{nZ}/results_calib/Pycaso_retroprojection_error/z_list_Zernike.npy')
-      #Xf=np.zeros((n,X.shape[1],3))
-      #xthf=np.zeros((n,X.shape[1],3))
-
-      #for i in range(n//2):
-        #for j in range(len(X[0])):
-          #Xf[i][j]=np.insert(X[i][j],2,z_list[i][j])
-          #Xf[i+n//2][j]=np.insert(X[i+n//2][j],2,z_list[i][j])
-          #xthf[i][j]=np.insert(xth[i][j],2,z_list[i][j])
-          #xthf[i+n//2][j]=np.insert(xth[i+n//2][j],2,z_list[i][j])
-
-          #print(Xf)
-          #plt.imshow(Xf)
-
-
-    #except:
-      #print('No retroprojection')
-
     #Xff=np.zeros((n,3,X.shape[1]))
     #for i in range(n):
         #for j in range(len(Xf[0])):
@@ -139,19 +117,6 @@ if __name__ == "__main__":
 
     #A_Zernike=np.load(f'./{date}/nZ_{nZ}/results_calib/A_Zernike.npy')
 
-    ##Z_mean,Z_std,Z_iter = pcs.retroprojection_error('Zernike',
-                                                     ##nZ,
-                                                     ##A_Zernike,
-                                                     ##z_points,
-                                                     ##X,
-                                                     ##xth,
-                                                     ##cam1_folder=f'./{date}/r',
-                                                     ##cam2_folder=f'./{date}/l',
-                                                     ##ncx=12,
-                                                     ##ncy=12,
-                                                     ##sqr=7.5)
-
-
 
     #get the points of cam1 and cam2
     #X1,X2 = data.DIC_get_positions(DIC_dict)
@@ -169,93 +134,4 @@ if __name__ == "__main__":
     #np.save(f'./{date}/nZ_{nZ}/results_calib/Zernike_results.npy', Zernike_results)
 
 
-    #ver = crappy.blocks.VideoExtenso(camera='XiAPI',
-                                   #config=True,
-                                   #save_images=True,
-                                   #save_folder=f'./{date}/40d_cd/right/',
-                                   #labels=['tr(s)', 'meta_r', 'pix_r', 'eyy_r', 'exx_r'],
-                                   #white_spots=False,
-                                   #**{"serial_number": "14482450",
-                                      #"exposure": 50000,
-                                      #"trigger": "Hdw after config"})
 
-    #vel = crappy.blocks.VideoExtenso(camera='XiAPI',
-                                   #config=True,
-                                   #save_images=True,
-                                   #save_folder=f'./{date}/40d_cd/left/',
-                                   #labels=['tl(s)', 'meta_l', 'pix_l', 'eyy_l', 'exx_l'],
-                                   #white_spots=False,
-                                   #**{"serial_number": "32482550",
-                                      #"exposure": 50000,
-                                      #"trigger": "Hdw after config"})
-
-
-    #ftdi = crappy.blocks.IOBlock('Ft232r', cmd_labels=['cmd'], spam=False, direction=0b0001, URL='ftdi://ftdi:232:A105QJ01/1')
-
-    #flow_ali = crappy.blocks.IOBlock('Flow_controller_alicat',
-                                   #port="/dev/ttyUSB0",
-                                   #startbit=1,
-                                   #databits=8,
-                                   #parity="N",
-                                   #stopbits=1,
-                                   #errorcheck="crc",
-                                   #baudrate=9600,
-                                   #method="RTU",
-                                   #timeout=3,
-                                   #svp=['Pressure', 'Mass_flow'],
-                                   #cmd_labels=['flowcmd'],
-                                   #labels=['t(s)', 'press', 'mass_flow'])
-
-    #trid = PolyZernike.ControlZernike(Zernikecoeffs = A_Zernike,
-                               #matrix_file = f'./{date}/transfomatrix.npy',
-                               #label = 'triexx',
-                               #pform = nZ)
-
-
-    #trigcam = triggerflow.Triggercamexx(cmd_labels=['triexx', 'exxcmd'])
-
-    #gen_exx = crappy.blocks.Generator([{'type': 'Constant',
-                                      #'value': 0.15,
-                                      #'condition': 'path_id>1'}], cmd_label='exxcmd', spam=True)
-
-    #gen_dexx = crappy.blocks.Generator([{'type': 'Constant',
-                                     #'value': 0.005,
-                                     #'condition':'delay=30'}], cmd_label='dexxcmd', spam=True)
-
-    #p = 4400
-    #i = 1800
-    #d = 0
-
-    #pid = crappy.blocks.PID(kp=p,
-                          #ki=i,
-                          #kd=d,
-                          #out_max=100,
-                          #out_min=0,
-                          #setpoint_label='dexxcmd',
-                          #input_label='dexx',
-                          #labels=['t(s)', 'flowcmd'])
-
-    #rec_tridexx = crappy.blocks.Recorder(file_name = './2023_08_22/40d_cd/defexxsvp')
-
-    #rec_pid = crappy.blocks.Recorder(file_name='./2023_08_22/40d_cd/pid')
-
-    #rec_ali = crappy.blocks.Recorder(file_name='./2023_08_22/40d_cd/ali')
-
-
-    #crappy.link(gen_exx, trigcam)
-    #crappy.link(trid, trigcam)
-    #crappy.link(trigcam, ftdi)
-    #crappy.link(trigcam, gen_exx)
-
-    #crappy.link(vel, trid)
-    #crappy.link(ver, trid)
-
-    #crappy.link(gen_dexx, pid)
-    #crappy.link(trid, pid)
-    #crappy.link(pid, flow_ali)
-
-    #crappy.link(trid, rec_tridexx)
-    #crappy.link(pid, rec_pid)
-    #crappy.link(flow_ali, rec_ali)
-
-    #crappy.start()

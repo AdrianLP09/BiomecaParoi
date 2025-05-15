@@ -7,7 +7,7 @@ import ft232R
 
 if __name__ == "__main__":
 
-  date = "2025_04_28"
+  date = "2025_05_15"
 
   cam_R = crappy.blocks.Camera(camera="XiAPI", 
                                config=False,
