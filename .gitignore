@@ -1,6 +1,7 @@
 venv/
 package/
 __pycache__/
+Pycaso/
 
 
 .testrotate.py.kate-swp

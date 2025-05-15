@@ -4,10 +4,10 @@ from scipy.interpolate import Rbf
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
 
-date = '2025_05_05'
+date = '2025_05_15'
 sili = 'SC37_40'
-tricot = '4DFIXNR'
-nZ = 9
+tricot = 'A1L'
+nZ = 5
 l_pform = 4
 spform=332
 
@@ -61,9 +61,9 @@ if tricot == 'P7R':
   ip = 0
 
 ip = -2
-X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/X3d_{sili}.txt', delimiter=' ')[:ip+1]
-Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Y3d_{sili}.txt', delimiter=' ')[:ip+1]
-Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/results_id/Z3d_{sili}.txt', delimiter=' ')[:ip+1]
+X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/X3d.txt', delimiter=' ')[:ip+1]
+Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/Y3d.txt', delimiter=' ')[:ip+1]
+Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/Z3d.txt', delimiter=' ')[:ip+1]
 print(len(X3d),len(Y3d),len(Z3d))
 X0min = min(X3d[0])
 X0max = max(X3d[0])

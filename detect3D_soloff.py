@@ -195,8 +195,8 @@ def RtoL_transfo(rightpoints, matrix):
 
 if __name__ == '__main__' :  
 
-    date = "2025_04_28"
-    sample = 'SC37_40_4DFIXNR'
+    date = "2025_05_15"
+    sample = 'SC37_40_A1L'
     spform = 332
     data_folder = f'./{date}/results_calib/Spform_{spform}/'
     saving_folder = f'./{date}/{sample}/'
@@ -207,11 +207,16 @@ if __name__ == '__main__' :
         P = pathlib.Path(saving_folder)
         pathlib.Path.mkdir(P, parents = True)
 
+    if os.path.exists(saving_folder+f'Spform_{spform}/') :
+        ()
+    else :
+        P = pathlib.Path(saving_folder+f'Spform_{spform}/')
+        pathlib.Path.mkdir(P, parents = True)
 
     S_constants0 = np.load(data_folder+'S_constants0.npy')
     S_constants = np.load(data_folder+'S_constants.npy')
 
-    M = np.load(f'./{date}/transfomatrix.npy')
+    M = np.load(f'./{date}/{sample}/transfomatrix.npy')
 
     ##reverse the right images, cameras are in mirror
     #Liste_image  = sorted(glob(f'./{date}/{sample}/video_extenso_right/'+"0*"))
@@ -220,76 +225,97 @@ if __name__ == '__main__' :
         #img=cv2.rotate(img,cv2.ROTATE_180)
         #cv2.imwrite(image,img)
 
-    all_pxl, all_pyl = CoordCam(f'./{date}/{sample}/video_extenso_left/', 'maskL.tiff', './test_calib/calib/images_centres_L')
-    np.save(saving_folder + 'all_pxl.npy', all_pxl)
-    np.save(saving_folder + 'all_pyl.npy', all_pyl)
+    #all_pxl, all_pyl = CoordCam(f'./{date}/{sample}/video_extenso_left/', 'maskL.tiff', './test_calib/calib/images_centres_L')
+    #np.save(saving_folder + 'all_pxl.npy', all_pxl)
+    #np.save(saving_folder + 'all_pyl.npy', all_pyl)
 
-    all_pxr, all_pyr = CoordCam(f'./{date}/{sample}/video_extenso_right/', 'maskR.tiff', './test_calib/calib/images_centres_R')
-    np.save(saving_folder + 'all_pxr.npy', all_pxr)
-    np.save(saving_folder + 'all_pyr.npy', all_pyr)
+    #all_pxr, all_pyr = CoordCam(f'./{date}/{sample}/video_extenso_right/', 'maskR.tiff', './test_calib/calib/images_centres_R')
+    #np.save(saving_folder + 'all_pxr.npy', all_pxr)
+    #np.save(saving_folder + 'all_pyr.npy', all_pyr)
 
     all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
     all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
     all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
     all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
-    print(all_pyr.shape, all_pyl.shape, all_pxr.shape, all_pxl.shape)
     Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)
 
 #LA BONNE IDEE
     Lrp = RtoL_transfo(Lp[0][1], M)
+    #Lfalse = []
+    #for j in range(len(Lrp)):
+##      if Lp[0][0][j][0] - Lrp[j][0] > 40 or Lp[0][0][j][0] - Lrp[j][0] < 20: #pour 9 degrés et 10 degrés l=9cm
+##      if Lp[0][0][j][0] - Lrp[j][0] > 90 or Lp[0][0][j][0] - Lrp[j][0] < 70: #pour 18 degrés
+##      if Lp[0][0][j][0] - Lrp[j][0] > 60 or Lp[0][0][j][0] - Lrp[j][0] < 40: #pour 20 degrés l=15 cm
+##      if Lp[0][0][j][0] - Lrp[j][0] > 115 or Lp[0][0][j][0] - Lrp[j][0] < 90: #pour 28 degrés
+##      if Lp[0][0][j][0] - Lrp[j][0] > 80 or Lp[0][0][j][0] - Lrp[j][0] < 60: #pour 30 degrés l=20 cm
+##      if Lp[0][0][j][0] - Lrp[j][0] > 140 or Lp[0][0][j][0] - Lrp[j][0] < 120: #pour 40 degrés
+      #if Lp[0][0][j][1] - Lrp[j][1] > 160 or Lp[0][0][j][1] - Lrp[j][1] < 130: #pour 40 degrés l=31 cm
+##      if Lp[0][0][j][0] - Lrp[j][0] > 190 or Lp[0][0][j][0] - Lrp[j][0] < 140:
+        #Lfalse.append([Lrp[j], j])
+    #print(len(Lfalse))
+    #Lid = []
+    #for j in range(len(Lfalse)):
+        #for k in range(len(Lfalse)):
+##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 10 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 50: #pour 9 degrés et 10 degrés l=9cm
+##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 60 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 100: #pour 18 degrés
+##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 40 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 60: #pour 20 degrés l=15 cm
+##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 80 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 120: #pour 28 degrés
+##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 60 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 90: #pour 30 degrés l=20 cm
+##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 110 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 150: #pour 40 degrés
+          #if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 120 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 180: #pour 40 degrés l=31 cm
+##            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 2: #pour 9 degrés et 20 degrés l=15 cm et 10 degrés l=9cm
+##            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 3: #pour 18 degrés
+##            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 4: #pour 28 degrés et 30 degrés l=20 cm
+            #if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 8: #pour 40 degrés et pour 40 degrés l=31 cm
+              #Lid.append([Lfalse[j][1], Lfalse[k][1]])
+    #print(len(Lid))
+    #print(len(Lp))
+    #for i in range(len(Lp)):
+      #Rightbuff = Lp[i][1].copy()
+      #for j in range(len(Lid)):
+        #Lp[i][1][Lid[j][0]] = Rightbuff[Lid[j][1]]
+
     Lfalse = []
+    Lid = []
     for j in range(len(Lrp)):
-#      if Lp[0][0][j][0] - Lrp[j][0] > 40 or Lp[0][0][j][0] - Lrp[j][0] < 20: #pour 9 degrés et 10 degrés l=9cm
-#      if Lp[0][0][j][0] - Lrp[j][0] > 90 or Lp[0][0][j][0] - Lrp[j][0] < 70: #pour 18 degrés
-#      if Lp[0][0][j][0] - Lrp[j][0] > 60 or Lp[0][0][j][0] - Lrp[j][0] < 40: #pour 20 degrés l=15 cm     
-#      if Lp[0][0][j][0] - Lrp[j][0] > 115 or Lp[0][0][j][0] - Lrp[j][0] < 90: #pour 28 degrés 
-#      if Lp[0][0][j][0] - Lrp[j][0] > 80 or Lp[0][0][j][0] - Lrp[j][0] < 60: #pour 30 degrés l=20 cm                 
-#      if Lp[0][0][j][0] - Lrp[j][0] > 140 or Lp[0][0][j][0] - Lrp[j][0] < 120: #pour 40 degrés 
-      if Lp[0][0][j][0] - Lrp[j][0] > 160 or Lp[0][0][j][0] - Lrp[j][0] < 130: #pour 40 degrés l=31 cm
-#      if Lp[0][0][j][0] - Lrp[j][0] > 190 or Lp[0][0][j][0] - Lrp[j][0] < 140:
-        Lfalse.append([Lrp[j], j])
+        if abs(Lp[0][0][j][0] - Lrp[j][0]) > 10:
+            Lfalse.append([Lrp[j], j])
+        print(Lp[0][0][j][0] - Lrp[j][0])
     print(len(Lfalse))
-    Lid = []   
+    print(Lfalse)
+
     for j in range(len(Lfalse)):
         for k in range(len(Lfalse)):
-#          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 10 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 50: #pour 9 degrés et 10 degrés l=9cm
-#          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 60 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 100: #pour 18 degrés
-#          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 40 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 60: #pour 20 degrés l=15 cm 
-#          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 80 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 120: #pour 28 degrés
-#          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 60 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 90: #pour 30 degrés l=20 cm 
-#          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 110 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 150: #pour 40 degrés
-          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 120 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 180: #pour 40 degrés l=31 cm
-#            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 2: #pour 9 degrés et 20 degrés l=15 cm et 10 degrés l=9cm
-#            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 3: #pour 18 degrés
-#            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 4: #pour 28 degrés et 30 degrés l=20 cm 
-            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 8: #pour 40 degrés et pour 40 degrés l=31 cm
-              Lid.append([Lfalse[j][1], Lfalse[k][1]]) 
+            if abs(Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0]) < 10 :
+                if Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]> 100 and Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]<150:
+                    Lid.append([Lfalse[j][1], Lfalse[k][1]])
     print(len(Lid))
-    for i in range(len(Lp)):
-      Rightbuff = Lp[i][1].copy()
-      for j in range(len(Lid)):
-        Lp[i][1][Lid[j][0]] = Rightbuff[Lid[j][1]]
+    print(Lid)
 
+    for i in range(len(Lp)):
+        Rightbuff = Lp[i][1].copy()
+        for j in range(len(Lid)):
+            Lp[i][1][Lid[j][0]] = Rightbuff[Lid[j][1]]
     
-      Lx3d = []
-      Ly3d = []
-      Lz3d = []
-      for i in range(len(Lp)):
-        Left, Right = Lp[i]
-        xSoloff_solution = pcs.Soloff_identification (Left,
-                                                      Right,
-                                                      S_constants0,
-                                                      S_constants,
-                                                      Soloff_pform = spform,
-                                                      method = 'curve_fit')
-        x,y,z = xSoloff_solution
-        Lx3d.append(x)
-        Ly3d.append(y)
-        Lz3d.append(z)
- 
-    np.savetxt(saving_folder + f'Spform_{spform}/X3d_SC37_40.txt', Lx3d)
-    np.savetxt(saving_folder + f'Spform_{spform}/Y3d_SC37_40.txt', Ly3d)
-    np.savetxt(saving_folder + f'Spform_{spform}/Z3d_SC37_40.txt', Lz3d)
+    Lx3d = []
+    Ly3d = []
+    Lz3d = []
+    for i in range(len(Lp)):
+      Left, Right = Lp[i]
+      xSoloff_solution = pcs.Soloff_identification (Left,
+                                                    Right,
+                                                    S_constants0,
+                                                    S_constants,
+                                                    Soloff_pform = spform,
+                                                    method = 'curve_fit')
+      x,y,z = xSoloff_solution
+      Lx3d.append(x)
+      Ly3d.append(y)
+      Lz3d.append(z)
+
+    np.savetxt(saving_folder + f'Spform_{spform}/X3d.txt', Lx3d)
+    np.savetxt(saving_folder + f'Spform_{spform}/Y3d.txt', Ly3d)
+    np.savetxt(saving_folder + f'Spform_{spform}/Z3d.txt', Lz3d)
 
 
     fig=plt.figure(figsize=(16,9))

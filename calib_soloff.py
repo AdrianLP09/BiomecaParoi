@@ -1,19 +1,20 @@
 import crappy
-import pycaso as pcs
-import pattern
+import matplotlib.pyplot as plt
 import ft232R #classe InOut pour le Ft232r
 import triggerflow # classes de trigger de l'expérience
-import PolyZernike
+#import PolyZernike
 from glob import glob
 import numpy as np
 import cv2
-import data_library as data
-import matplotlib.pyplot as plt
-import solve_library as solvel
+from Pycaso import data_library as data
+from Pycaso import solve_library as solvel
+from Pycaso import pycaso as pcs
+from Pycaso import pattern
+
 
 if __name__ == "__main__":
 
-    date = "2025_04_28"
+    date = "2025_05_15"
 
     spform = 332   #polynomial degree
 
