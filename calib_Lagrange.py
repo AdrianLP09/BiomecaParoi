@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     date = "2025_05_15"
 
-    l_pform = 4   #polynomial degree
+    l_pform = 5   #polynomial degree
 
     saving_folder = f'./{date}/results_calib/Lpform_{l_pform}/'
 
@@ -69,6 +69,24 @@ if __name__ == "__main__":
                                                 **calibration_dict)
 
     np.save(saving_folder+'L_constants.npy', L_constants)
+
+    coord=np.load(saving_folder+'3D_coordinates/3D_coordinates_Lagrange.npy')
+
+    #display the coordinates in the 3D space
+
+    xc=[]
+    yc=[]
+    zc=[]
+    for i in range(len(coord[0])):
+      xc.append(coord[0][i])
+      yc.append(coord[1][i])
+      zc.append(coord[2][i])
+    ax=plt.figure().add_subplot(111,projection='3d')
+    ax.scatter(xc,yc,zc)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    plt.show()
 
 
     #X1,X2 = data.DIC_get_positions(DIC_dict)

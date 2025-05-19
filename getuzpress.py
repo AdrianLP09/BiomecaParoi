@@ -8,9 +8,9 @@ from scipy.optimize import least_squares
 date = '2025_05_15'
 sili = 'SC37_40'
 tricot = 'A1L'
-nZ = 9
+nZ = 5
 l_pform = 4
-spform=332
+spform=222
 
 method_dict = {'Zernike','Lagrange','Soloff'}
 method = input('Choose a method\n')
@@ -71,7 +71,8 @@ for i in range(len(XX)):
   Uz.append(ZZ[i] - ZZ[0])
 
 Uzmax = [Uz[i][50][50] for i in range(len(Uz))]
-
+if method != 'Soloff' :
+  Uzmax=-Uzmax
 
 #Récupération de la pression à chaque image
 Limage = sorted(glob(f'./{date}/video_extenso_left/' + '0*'))

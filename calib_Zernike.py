@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     date = "2025_05_15"
 
-    nZ = 5 #polynomial degree
+    nZ = 12 #polynomial degree
 
     saving_folder = f'./{date}/results_calib/nZ_{nZ}/'
 

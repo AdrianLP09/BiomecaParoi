@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 date = '2025_05_15'
 sili = 'SC37_40'
 tricot = 'A1L'
-nZ = 5
+nZ = 12
 l_pform = 4
-spform=332
+spform=222
 
 method_dict = {'Zernike','Lagrange','Soloff'}
 method = input('Choose a method\n')
@@ -52,10 +52,10 @@ if tricot == 'P7NR':
 #    ip = 85 (essai génie civil)
   ip = 140
 if tricot == 'A1L':
-#    ip = 66 (essai génie civil)   
+#    ip = 66 (essai génie civil)
   ip = 78
 if tricot == 'P1':
-#    ip = 70 (essai génie civil)    
+#    ip = 70 (essai génie civil)
   ip = 120
 if tricot == 'P7R':
   ip = 0
@@ -129,6 +129,8 @@ zp = ZZc[ip][~np.isnan(ZZc[ip])]
 Upx = xp-x0
 Upy = yp-y0
 Upz = zp-z0
+if method != 'Soloff' :
+  Upz=-Upz
 
 
 PER = [i for i in np.arange(0.55, 0.95, 0.05)]

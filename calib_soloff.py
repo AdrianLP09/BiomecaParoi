@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     date = "2025_05_15"
 
-    spform = 332   #polynomial degree
+    spform = 222   #polynomial degree
 
     saving_folder = f'./{date}/results_calib/Spform_{spform}/'
 

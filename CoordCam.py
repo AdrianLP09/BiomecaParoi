@@ -11,10 +11,6 @@ import sys
 import pathlib
 import cv2
 from math import *
-import math
-from Pycaso import solve_library as solvel
-from Pycaso import data_library as data
-from Pycaso import pycaso as pcs
 
 
 
@@ -166,33 +162,6 @@ def CoordCam(path=str, mask=str, savefile=str):
         #  np.savetxt('./2023_08_29/40d_cd/SC37_40_P7NR/py_right.txt', all_py) # save Y
     return all_px, all_py
 
-def f(all_pxl, all_pyl, all_pxr, all_pyr):
-  LA_allp = []
-  for i in range(len(all_pyl)):
-    A_allp = np.zeros((2,len(all_pyl[0]),2))
-    for j in range(len(all_pyl[0])):
-      A_allp[0][j][0] = all_pyl[i][j]
-      A_allp[0][j][1] = all_pxl[i][j]
-      A_allp[1][j][0] = all_pyr[i][j]
-      A_allp[1][j][1] = all_pxr[i][j]
-    LA_allp.append(A_allp)
-  return LA_allp
-
-
-def RtoL_transfo(rightpoints, matrix):
-  Rightp = []
-  for i in range(len(rightpoints)):
-    vect = list(rightpoints[i])
-    vect.append(1)
-    vectp = np.dot(matrix, vect)
-    vectp = list(vectp)
-    vectp[0] = vectp[0]/vectp[2]
-    vectp[1] = vectp[1]/vectp[2]
-    del vectp[2]
-    Rightp.append(vectp)
-  return np.array(Rightp)
-
-
 
 date = '2025_05_15'
 sample = 'SC37_40_A1L'
@@ -212,9 +181,9 @@ else :
     #img=cv2.rotate(img,cv2.ROTATE_180)
     #cv2.imwrite(image,img)
 
-#all_pxl, all_pyl = CoordCam(f'./{date}/video_extenso_left/', 'maskL.tiff',saving_folder)
-#np.save(saving_folder + 'all_pxl.npy', all_pxl)
-#np.save(saving_folder + 'all_pyl.npy', all_pyl)
+all_pxl, all_pyl = CoordCam(f'./{date}/video_extenso_left/', 'maskL.tiff',saving_folder)
+np.save(saving_folder + 'all_pxl.npy', all_pxl)
+np.save(saving_folder + 'all_pyl.npy', all_pyl)
 
 all_pxr, all_pyr = CoordCam(f'./{date}/video_extenso_right/', 'maskR.tiff',saving_folder)
 np.save(saving_folder + 'all_pxr.npy', all_pxr)
