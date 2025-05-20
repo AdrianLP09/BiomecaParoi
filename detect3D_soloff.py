@@ -44,17 +44,21 @@ def CoordCam(path=str, mask=str, savefile=str):
   impair_coeff = 1. # impairs the thresh level for global binarization of spots
   Min_area = 10 #used to delete small and fake detected spots
   pix = 10 # pixel margin to the ZOI bounding box
+
+
+  # Chargement et conversion en niveau de gris si nécessaire
   image_raw = plt.imread(Liste_image[0])
   if image_raw.ndim == 3:
       image = image_raw[:,:,0]  # ou moyenne des canaux: np.mean(image_raw, axis=2)
   else:
       image = image_raw
-
+      
   mask_raw = plt.imread(Mask)
   if mask_raw.ndim == 3:
       im_mask = mask_raw[:,:,0]/255.
   else:
       im_mask = mask_raw/255.
+
   ################################ First step : spotting the nodes
   img = invert(difference_of_gaussians(image, 5, 6))
   thresh = threshold_otsu(img[np.where(im_mask == 1)])
