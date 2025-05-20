@@ -304,6 +304,14 @@ if pymodbus.__version__=='3.9.0':
 if __name__ == "__main__":
 
     date='2025_05_15'
+    sample = 'SC37_40_A1L'
+
+    if os.path.exists(saving_folder) :
+        ()
+    else :
+        P = pathlib.Path(saving_folder)
+        pathlib.Path.mkdir(P, parents = True)
+
 
     flow_ali = crappy.blocks.IOBlock('Flow_controller_alicat',
                                     port="/dev/ttyUSB1",
@@ -322,7 +330,7 @@ if __name__ == "__main__":
     ver = crappy.blocks.VideoExtenso(camera='XiAPI',
                                     config=True,
                                     save_images=True,
-                                    save_folder=f'./{date}/video_extenso_right/',
+                                    save_folder=f'./{date}/{sample}/video_extenso_right/',
                                     img_shape=(2048,2048),
                                     img_dtype='uint8',
                                     labels=['tr(s)', 'meta_r', 'pix_r', 'eyy_r', 'exx_r'],
@@ -335,7 +343,7 @@ if __name__ == "__main__":
     vel = crappy.blocks.VideoExtenso(camera='XiAPI',
                                     config=True,
                                     save_images=True,
-                                    save_folder=f'./{date}/video_extenso_left/',
+                                    save_folder=f'./{date}/{sample}/video_extenso_left/',
                                     img_shape=(2048,2048),
                                     img_dtype='uint8',
                                     labels=['tl(s)', 'meta_l', 'pix_l', 'eyy_l', 'exx_l'],
@@ -359,11 +367,11 @@ if __name__ == "__main__":
                                         'value': 0.1,
                                         'condition': 'delay=150'}], cmd_label='cmd')
 
-    rec_ali = crappy.blocks.Recorder(file_name=f'./{date}/data_ali.txt')
+    rec_ali = crappy.blocks.Recorder(file_name=f'./{date}/{sample}/data_ali.txt')
 
-    rec_ver = crappy.blocks.Recorder(file_name=f'./{date}/data_ver.txt', labels=['tr(s)','pix_r','exx_r','eyy_r'])
+    rec_ver = crappy.blocks.Recorder(file_name=f'./{date}/{sample}/data_ver.txt', labels=['tr(s)','pix_r','exx_r','eyy_r'])
 
-    rec_vel = crappy.blocks.Recorder(file_name=f'./{date}/data_vel.txt', labels=['tl(s)','pix_l','exx_l','eyy_l'])
+    rec_vel = crappy.blocks.Recorder(file_name=f'./{date}/{sample}/data_vel.txt', labels=['tl(s)','pix_l','exx_l','eyy_l'])
 
     crappy.link(gen_ft, ftdi)
     crappy.link(gen_flow, flow_ali)

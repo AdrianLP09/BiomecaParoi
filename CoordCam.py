@@ -167,11 +167,6 @@ date = '2025_05_15'
 sample = 'SC37_40_A1L'
 saving_folder=f'./{date}/{sample}/'
 
-if os.path.exists(saving_folder) :
-        ()
-else :
-    P = pathlib.Path(saving_folder)
-    pathlib.Path.mkdir(P, parents = True)
 
 
 ###reverse the right images, cameras are in mirror

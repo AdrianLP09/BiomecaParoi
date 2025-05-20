@@ -44,8 +44,8 @@ if __name__ == '__main__':
     data_folder = f'./{date}/results_calib/nZ_{nZ}/'
 
     calibration_dict = {
-      'cam1_folder' : f'./{date}/video_extenso_left/',
-      'cam2_folder' : f'./{date}/video_extenso_right/',
+      'cam1_folder' : f'./{date}/{sample}/video_extenso_left/',
+      'cam2_folder' : f'./{date}/{sample}/video_extenso_right/',
       'name' : 'calibration',
       'saving_folder' : data_folder,
       'ncx' : 12,
