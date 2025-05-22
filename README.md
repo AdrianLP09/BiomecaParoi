@@ -3,6 +3,7 @@
 Ce projet a pour objectif de réaliser des expériences de gonflement de prothèses de paroi abdominale. Il sé décompose en deux parties : **l'expérience de gonflement** et **le traitement des données acquises**. L'étude du gonflement des échantillons, réalisé par un compresseur contrôlé via un débitmètre *Alicat*, se fait par vidéo-extensométrie, grâce à deux caméras _Ximea_ dont le déclenchement coordonné est assuré par un _FT232R_. La machine de gonflement en elle-même est une imprimante 3D.  
 Il se repose sur les bibliothèques [Crappy](https://github.com/LaboratoireMecaniqueLille/crappy) et [Pycaso](https://github.com/Eddidoune/Pycaso) respectivement pour le contrôle des instruments d'essais, et le traitement des données.
 
+
 ## Gonflement et acquisition des données
 ### Étalonnage par planche CHArUco
 Les fichiers [ft232r.py](ft232R.py) et [moteur.py](moteur.py) permettent de contrôler le ft232R et l'imprimante.

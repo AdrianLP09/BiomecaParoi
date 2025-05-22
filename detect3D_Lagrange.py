@@ -44,8 +44,8 @@ if __name__ == '__main__' :
     data_folder = f'./{date}/results_calib/Lpform_{l_pform}/'
 
     calibration_dict = {
-      'cam1_folder' : f'./{date}/video_extenso_left/',
-      'cam2_folder' : f'./{date}/video_extenso_right/',
+      'cam1_folder' : f'./{date}/{sample}/video_extenso_left/',
+      'cam2_folder' : f'./{date}/{sample}/video_extenso_right/',
       'name' : 'calibration',
       'saving_folder' : data_folder,
       'ncx' : 12,
@@ -73,65 +73,63 @@ if __name__ == '__main__' :
     all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
     all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
     Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)
+    N = len(Lp[0][0])
+
+### Appariement des points
+    Template = cv2.imread(saving_folder+'Template_L.tiff') #Template Gimp
+    Y_template,X_template = 904,863 #Constantes à modifier en fonction des coordonnées du Template
+
+    Img = cv2.imread(saving_folder + 'Template_R.tiff') #Image 0 de la caméra de droite
+
+    #On fait correspondre le template sur l'image de droite et on observe le décalage entre les deux images
+    result = cv2.matchTemplate(Img, Template, cv2.TM_CCOEFF)
+    (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
+    (startX,startY) = maxLoc
+    CoordTemplate = (Y_template, X_template, Y_template+Template.shape[0], X_template+Template.shape[1])
+    Diff = (CoordTemplate[0]-maxLoc[0],CoordTemplate[1]-maxLoc[1])
 
 
-#LA BONNE IDEE
-    Lrp = RtoL_transfo(Lp[0][1], M)
-    #Lfalse = []
-    #for j in range(len(Lrp)):
-##      if Lp[0][0][j][0] - Lrp[j][0] > 40 or Lp[0][0][j][0] - Lrp[j][0] < 20: #pour 9 degrés et 10 degrés l=9cm
-##      if Lp[0][0][j][0] - Lrp[j][0] > 90 or Lp[0][0][j][0] - Lrp[j][0] < 70: #pour 18 degrés
-##      if Lp[0][0][j][0] - Lrp[j][0] > 60 or Lp[0][0][j][0] - Lrp[j][0] < 40: #pour 20 degrés l=15 cm
-##      if Lp[0][0][j][0] - Lrp[j][0] > 115 or Lp[0][0][j][0] - Lrp[j][0] < 90: #pour 28 degrés
-##      if Lp[0][0][j][0] - Lrp[j][0] > 80 or Lp[0][0][j][0] - Lrp[j][0] < 60: #pour 30 degrés l=20 cm
-##      if Lp[0][0][j][0] - Lrp[j][0] > 140 or Lp[0][0][j][0] - Lrp[j][0] < 120: #pour 40 degrés
-      #if Lp[0][0][j][0] - Lrp[j][0] > 160 or Lp[0][0][j][0] - Lrp[j][0] < 130: #pour 40 degrés l=31 cm
-##      if Lp[0][0][j][0] - Lrp[j][0] > 190 or Lp[0][0][j][0] - Lrp[j][0] < 140:
-        #Lfalse.append([Lrp[j], j])
-    #print(len(Lfalse))
-    #Lid = []
-    #for j in range(len(Lfalse)):
-        #for k in range(len(Lfalse)):
-##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 10 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 50: #pour 9 degrés et 10 degrés l=9cm
-##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 60 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 100: #pour 18 degrés
-##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 40 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 60: #pour 20 degrés l=15 cm
-##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 80 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 120: #pour 28 degrés
-##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 60 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 90: #pour 30 degrés l=20 cm
-##          if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 110 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 150: #pour 40 degrés
-          #if Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] > 120 and Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0] < 180: #pour 40 degrés l=31 cm
-##            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 2: #pour 9 degrés et 20 degrés l=15 cm et 10 degrés l=9cm
-##            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 3: #pour 18 degrés
-##            if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 4: #pour 28 degrés et 30 degrés l=20 cm
-            #if abs(Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]) < 7: #pour 40 degrés et pour 40 degrés l=31 cm
-              #Lid.append([Lfalse[j][1], Lfalse[k][1]])
-    #print(len(Lid))
-    #for i in range(len(Lp)):
-      #Rightbuff = Lp[i][1].copy()
-      #for j in range(len(Lid)):
-        #Lp[i][1][Lid[j][0]] = Rightbuff[Lid[j][1]]
+    xr,yr = [],[]
+    for i in range(len(Lp[0][0])):
+        xr.append(Lp[0][1][i][1])
+        yr.append(Lp[0][1][i][0])
 
-    Lfalse = []
-    Lid = []
-    for j in range(len(Lrp)):
-        if abs(Lp[0][0][j][0] - Lrp[j][0]) > 10:
-            Lfalse.append([Lrp[j], j])
-        print(Lp[0][0][j][0] - Lrp[j][0])
-    print(len(Lfalse))
+    # On applique le delta aux coordonnées de droite
+    xr2,yr2 = [],[]
+    for i in range(N):
+        yr2.append(yr[i] + Diff[0])
+        xr2.append(xr[i] + Diff[1])
 
-    for j in range(len(Lfalse)):
-        for k in range(len(Lfalse)):
-            if abs(Lp[0][0][Lfalse[j][1]][0] - Lfalse[k][0][0]) < 10 :
-                if Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]> 100 and Lp[0][0][Lfalse[j][1]][1] - Lfalse[k][0][1]<150:
-                    Lid.append([Lfalse[j][1], Lfalse[k][1]])
-    print(len(Lid))
+    Matched_Left = Lp[0][0]
+    Matched_Right = np.array([(yr2[i],xr2[i]) for i in range(N)])
+    row_ind = np.array([k for k in range(N)])
+    col_ind = np.zeros(N,dtype=int)
+    for i in range(N): # On fait l'appariement en regardant les points les plus proches après compensation du delta
+      m = np.linalg.norm(Matched_Left[i]-Matched_Right[0])
+      Id = 0
+      for j in range(N):
+        if np.linalg.norm(Matched_Left[i]-Matched_Right[j]) < m :
+          #if np.all(np.not_equal(col_ind,j)):
+          m = np.linalg.norm(Matched_Left[i]-Matched_Right[j])
+          Id = j
+          #else:
+            #if np.linalg.norm(Matched_Left[i]-Matched_Right[j])< np.linalg.norm(Matched_Left[i]-Matched_Right[col_ind==j]):
+              #m = np.linalg.norm(Matched_Left[i]-Matched_Right[j])
+              #Id = j
+      col_ind[i] = Id
+    col_ind = np.array(col_ind)
+    print(col_ind,len(col_ind))
+    #row_ind, col_ind = linear_sum_assignment(distance_matrix)
+    matched_gauche = Matched_Left[row_ind]
+    matched_droite = Matched_Right[col_ind]
+    for i in range(N):
+        print(matched_gauche[i][1]-matched_droite[i][1])
 
+    # Appariement
     for i in range(len(Lp)):
         Rightbuff = Lp[i][1].copy()
-        for j in range(len(Lid)):
-            Lp[i][1][Lid[j][0]] = Rightbuff[Lid[j][1]]
-
-
-
+        for j in range(len(col_ind)):
+            Lp[i][1][row_ind[j]] = Rightbuff[col_ind[j]]
 
 
     Lx3d = []

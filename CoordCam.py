@@ -11,6 +11,7 @@ import sys
 import pathlib
 import cv2
 from math import *
+import math
 
 
 
@@ -98,7 +99,7 @@ def CoordCam(path=str, mask=str, savefile=str):
         img = invert(difference_of_gaussians(image, 5,6))
         #img = invert(image)
         fig, ax = plt.subplots()
-        ax.imshow(img, cmap='gray')
+        #ax.imshow(img, cmap='gray')
         for i in range(len(areas)):
             '''
             Using previous image information, we loop over every previous regions.
@@ -149,7 +150,8 @@ def CoordCam(path=str, mask=str, savefile=str):
                     boundbox[i]=(np.float('nan'),np.float('nan'), np.float('nan'),np.float( 'nan'))
                     barx[i]=np.float('nan')
                     bary[i]=np.float('nan')
-                ax.plot(ppy,ppx,'ro',markersize=1)
+                ax.axis('off')
+                ax.plot(ppy,ppx,'ko', markersize=5)
         #if j==136:
         #plt.show()
         plt.savefig(savefile + '/img_%06d.png'%j,dpi=150)
@@ -176,10 +178,10 @@ saving_folder=f'./{date}/{sample}/'
     #img=cv2.rotate(img,cv2.ROTATE_180)
     #cv2.imwrite(image,img)
 
-all_pxl, all_pyl = CoordCam(f'./{date}/video_extenso_left/', 'maskL.tiff',saving_folder)
+all_pxl, all_pyl = CoordCam(saving_folder+'video_extenso_left/', 'maskL.tiff',saving_folder+'ROI_left/')
 np.save(saving_folder + 'all_pxl.npy', all_pxl)
 np.save(saving_folder + 'all_pyl.npy', all_pyl)
 
-all_pxr, all_pyr = CoordCam(f'./{date}/video_extenso_right/', 'maskR.tiff',saving_folder)
+all_pxr, all_pyr = CoordCam(saving_folder+'video_extenso_right/', 'maskR.tiff',saving_folder+'ROI_right/')
 np.save(saving_folder + 'all_pxr.npy', all_pxr)
 np.save(saving_folder + 'all_pyr.npy', all_pyr)
