@@ -1,7 +1,7 @@
 import crappy
 import time
 import numpy as np
-import pycaso as pcs
+from Pycaso import pycaso as pcs
 
 def RtoL_transfo(rightpoints, matrix):
   Rightp = []

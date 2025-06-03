@@ -9,6 +9,8 @@ from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 from pymodbus.constants import Endian
 import struct
 import ft232R
+import os
+
 
 
 if pymodbus.__version__=='3.0.2':
@@ -303,8 +305,10 @@ if pymodbus.__version__=='3.9.0':
 
 if __name__ == "__main__":
 
-    date='2025_05_15'
-    sample = 'SC37_40_A1L'
+    date='2025_06_02'
+    sample = 'SC37_20'
+
+    saving_folder=f'./{date}/{sample}/'
 
     if os.path.exists(saving_folder) :
         ()

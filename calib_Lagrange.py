@@ -15,9 +15,9 @@ from Pycaso import solve_library as solvel
 
 if __name__ == "__main__":
 
-    date = "2025_05_15"
+    date = "2025_06_02"
 
-    l_pform = 5   #polynomial degree
+    l_pform = 4   #polynomial degree
 
     saving_folder = f'./{date}/results_calib/Lpform_{l_pform}/'
 

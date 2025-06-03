@@ -95,8 +95,8 @@ def RtoL_transfo_Matrix(leftpoints, rightpoints):
 if __name__ == '__main__' :  
 
 
-    date = "2025_05_15"
-    sample= "SC37_40_A1L"
+    date = "2025_06_02"
+    sample= "SC37_20"
     #all_pxl, all_pyl = CoordCam(f'./{date}/matrix_calibL/', 'maskL_calib.tiff')
     #all_pxr, all_pyr = CoordCam(f'./{date}/matrix_calibR/', 'maskR_calib.tiff')
 

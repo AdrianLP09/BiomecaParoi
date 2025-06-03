@@ -14,9 +14,9 @@ from Pycaso import pattern
 
 if __name__ == "__main__":
 
-    date = "2025_05_15"
+    date = "2025_06_02"
 
-    spform = 222   #polynomial degree
+    spform = 333   #polynomial degree
 
     saving_folder = f'./{date}/results_calib/Spform_{spform}/'
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     S_constants0, S_constants, Mag = pcs.Soloff_calibration(z_list = x3_list,
                                                             Soloff_pform = spform,
-                                                            iterations = 6,
+                                                            iterations = 10,
                                                             **calibration_dict)
 
     np.save(saving_folder+'S_constants0.npy', S_constants0)

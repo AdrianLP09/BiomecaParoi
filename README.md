@@ -1,6 +1,6 @@
 # Gonflement de prothèses de la paroi abdominale
 
-Ce projet a pour objectif de réaliser des expériences de gonflement de prothèses de paroi abdominale. Il sé décompose en deux parties : **l'expérience de gonflement** et **le traitement des données acquises**. L'étude du gonflement des échantillons, réalisé par un compresseur contrôlé via un débitmètre *Alicat*, se fait par vidéo-extensométrie, grâce à deux caméras _Ximea_ dont le déclenchement coordonné est assuré par un _FT232R_. La machine de gonflement en elle-même est une imprimante 3D.  
+Ce projet a pour objectif de réaliser des expériences de gonflement de prothèses de paroi abdominale. Il se décompose en deux parties : **l'expérience de gonflement** et **le traitement des données acquises**. L'étude du gonflement des échantillons, réalisé par un compresseur contrôlé via un débitmètre *Alicat*, se fait par vidéo-extensométrie, grâce à deux caméras _Ximea_ dont le déclenchement coordonné est assuré par un _FT232R_. La machine de gonflement en elle-même est une imprimante 3D.
 Il se repose sur les bibliothèques [Crappy](https://github.com/LaboratoireMecaniqueLille/crappy) et [Pycaso](https://github.com/Eddidoune/Pycaso) respectivement pour le contrôle des instruments d'essais, et le traitement des données.
 
 
@@ -8,14 +8,16 @@ Il se repose sur les bibliothèques [Crappy](https://github.com/LaboratoireMecan
 ### Étalonnage par planche CHArUco
 Les fichiers [ft232r.py](ft232R.py) et [moteur.py](moteur.py) permettent de contrôler le ft232R et l'imprimante.
 Une fois les caméras, l'imprimante 3D et le ft232r connectés à l'ordinateur, écrire dans le terminal la commande 
+
 ```
-echo 0|sudo tee /sys/module/usbcore/parameters/usfs_memory_mb
-``` 
+echo 0|sudo tee /sys/module/usbcore/parameters/usbfs_memory_mb
+```
+ 
 pour libérer l'espace mémoire des caméras.
 
 Ouvrir XiCamTool en écrivant :
 ```
-opt/XIMEA/bin/xiCamTool
+/opt/XIMEA/bin/xiCamTool
 ```
 Une fois la planche ChArUco placée, on peut alors la visualiser sur les deux caméras.
 
@@ -72,7 +74,7 @@ Remarques:
 
 ### Réalisation de l'essai
 
-Lancer le script [alicat_flow_crappy.py](alicat_flow_crappy.py), qui définie la classe crappy du débitmètre, et lance le gonflement. Les fenêtres Videoextenso vont s'ouvrir : cela permet de piloter en vitesse de déformation le gonflement, ce qui n'est pour le moment pas réalisable (**À améliorer**). Sélectionner les 4 points centraux de l'échantillon puis fermer les fenêtres. Indiquer le type d'échantillon sur lequel l'essai est réalisé (***<typesilicone_typetricot>***)
+Lancer le script [alicat_flow_crappy.py](alicat_flow_crappy.py), qui définie la classe crappy du débitmètre, et lance le gonflement. Les fenêtres Videoextenso vont s'ouvrir : cela permet de piloter en vitesse de déformation le gonflement, ce qui n'est pour le moment pas réalisable (**À améliorer**). Sélectionner les 4 points centraux de l'échantillon puis fermer les fenêtres. Indiquer le type d'échantillon sur lequel l'essai est réalisé (***<typesilicone>_<typetricot>***)
 Le script permet d'obtenir les images de l'essai pour chaque caméra, les données de vidéoextensométrie, et les données du débitmètre (pression, débit volumique, début massique).
 
 <img src="images/Debutgonf.png" width="200" height="200" hspace = "100" > <img src="images/FinGonf.png" width="200" height="200" hspace = "100" >  
@@ -93,16 +95,21 @@ Créer un masque **GIMP** de la première image de chaque caméra dans les dossi
 
 <img src="images/ImageL_gonf.png" width="200" height="200" hspace = "100" > <img src="images/maskL_gonf.png" width="200" height="200" hspace = "100" > 
 
-Lancer le script [CoordCam.py](CoordCam.py) qui effectue l'identification et le suivi des points sur les deux caméras, en fonction du masque défini plus haut. Il permet des récupérer les coordonnées $x$ et $y$ de chaque point d'après la caméra de gauche, et d'après la caméra de droite.
+Dans **GIMP**, créer un fichier `Template_L.tiff` à partir de la première image de la caméra de gauche, en prenant le centre de l'échantillon, et créer une copie de la première image de droite en la renommant `Template_R.tiff`. Enregistrer ces deux documents dans le dossier '{date}/{sample}/'
+
+<img src="images/Template_L.png" width="200" height="200" hspace = "100" > <img src="images/Template_R.png" width="200" height="200" hspace = "100" >
+
+Lancer le script [CoordCam.py](CoordCam.py) qui effectue l'identification et le suivi des points sur les deux caméras, en fonction du masque défini plus haut. Il permet des récupérer les coordonnées $x$ et $y$ de chaque point d'après la caméra de gauche, et d'après la caméra de droite, puis effectue une correction de ce suivi afin d'assurer l'appariement entre les points de gauche et de droite.
 
 Lancer ensuite les scripts [detect3D_Lagrange.py](detect3D_Lagrange.py), [detect3D_Zernike.py](detect3D_Zernike.py) ou [detect3D_soloff.py](detect3D_soloff.py), selon la méthode d'interpolation voulue. Faire attention à prendre un degré polynomial correspondant à celui utilisé pour l'étalonnage.
-Ces scripts effectuent une correction du suivi réalisé par CoordCam, dans le cas où les correspondances entre les points à gauche et à droite soient incorrects, puis appliquent une interpolation à ces points suivant la méthode d'interpolation choisie. On récupère alors les coordonnées 3D des points en chaque instant de l'essai, et on affiche leur position finale sur un graphique.
+Ces scripts appliquent une interpolation à ces points suivant la méthode d'interpolation choisie. On récupère alors les coordonnées 3D des points en chaque instant de l'essai, et on affiche leur position finale sur un graphique.
 
 Remarques : 
 - Veiller à garder cohérents le choix de la date, de l'échantillon, et du degré du polynôme entre chaque script.
 - Il est possible d'ajuster les tailles minimales et maximales des points à détecter dans CoordCam
-- La méthode de correction appliquée dans les scripts `detect3D` est pour le moment non-optimale, car non-généralisable. Il est nécessaire d'ajuster les auxquelles on compare les écarts de position entre les points de gauche et les points de droite. (**À améliorer**)
+- Il est nécessaire d'ajuster manuellement l'appariement dans `CoordCam.py`. Pour cela on sert de matchTemplate de la bibliothèque [opencv](https://github.com/opencv/opencv) pour obtenir le décalage entre les images de gauche et de droite. Cette méthode n'est pas idéale, car elle ne prend pas en compte le changement de perspective, mais l'erreur est négligeable si l'angle d'orientation des caméras est faible.
+- Dans `CoordCam.py`, on doit rentrer manuellement les coordonnées d'origine de `Template_L` à partir des valeurs indiquées dans **GIMP**
 
 ### Post-traitement et récupération des caractéristiques mécaniques
 
-Lancer les scripts [getdef.py](getdef.py), [getaniso.py](getaniso.py) et [getuzpress.py](getuzpress.py) pour obtenir respectivement les déformations, la caractérisation de l'anisotropie de l'échantillon, et la courbe pression/UzMax.
+Lancer les scripts [getdef.py](getdef.py), [getaniso.py](getaniso.py) et [getuzpress.py](getuzpress.py) pour obtenir respectivement les déformations, la caractérisation de l'anisotropie de l'échantillon, et la courbe pression/UzMax.(**Scripts à revoir**)

@@ -9,7 +9,7 @@ sili = 'SC37_40'
 tricot = 'A1L'
 nZ = 12
 l_pform = 4
-spform=222
+spform=332
 
 method_dict = {'Zernike','Lagrange','Soloff'}
 method = input('Choose a method\n')
@@ -156,8 +156,8 @@ for per in PER:
     plt.scatter(xp[w], yp[w], c='r', linewidths=0.02)
     ax.set_xlabel('x (mm)')
     ax.set_ylabel('y (mm)')
-    plt.xlim(50,80)
-    plt.ylim(0,50)
+    plt.xlim(10,80)
+    plt.ylim(10,80)
     plt.show()
   except np.linalg.LinAlgError :
     print('Pas de correspondance')
