@@ -7,7 +7,7 @@ import ft232R
 
 if __name__ == "__main__":
 
-  date = "2025_06_02"
+  date = "2025_06_20"
 
   cam_R = crappy.blocks.Camera(camera="XiAPI", 
                                config=False,
@@ -17,7 +17,7 @@ if __name__ == "__main__":
                                img_shape=(2048,2048), 
                                img_dtype='uint8',
                                **{"serial_number": "14482450",
-                                  "exposure": 56229,
+                                  "exposure": 22822,
                                   "trigger": "Hardware"})
                                                                                              
   cam_L = crappy.blocks.Camera(camera="XiAPI", 
@@ -28,7 +28,7 @@ if __name__ == "__main__":
                                img_shape=(2048,2048), 
                                img_dtype='uint8', 
                                **{"serial_number": "32482550",
-                                  "exposure": 75197,
+                                  "exposure": 22822,
                                   "trigger": "Hardware"})
                                                                                              
   ftdi = crappy.blocks.IOBlock('Ft232r', cmd_labels=['cmd'], spam=False, direction=0b00000100, URL='ftdi://ftdi:232:FTU7DIHC/1')

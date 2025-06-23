@@ -14,9 +14,9 @@ from Pycaso import pattern
 
 if __name__ == "__main__":
 
-    date = "2025_06_02"
+    date = "2025_06_20"
 
-    spform = 333   #polynomial degree
+    spform = 333  #polynomial degree
 
     saving_folder = f'./{date}/results_calib/Spform_{spform}/'
 
@@ -61,14 +61,14 @@ if __name__ == "__main__":
       #img=cv2.rotate(img,cv2.ROTATE_180)
       #cv2.imwrite(image,img)
 
-    S_constants0, S_constants, Mag = pcs.Soloff_calibration(z_list = x3_list,
+    S_constants0, S_constants, Mag, px = pcs.Soloff_calibration(z_list = x3_list,
                                                             Soloff_pform = spform,
-                                                            iterations = 10,
+                                                            iterations = 8,
                                                             **calibration_dict)
 
     np.save(saving_folder+'S_constants0.npy', S_constants0)
     np.save(saving_folder+'S_constants.npy', S_constants)
-
+    print(px)
     coord=np.load(saving_folder+'3D_coordinates/3D_coordinates_Soloff.npy')
 
     #display the coordinates in the 3D space
@@ -85,7 +85,9 @@ if __name__ == "__main__":
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
+    plt.savefig(f'./{date}/results_calib/Spform_{spform}/3D_coordinates/'+'Coord3D')
     plt.show()
+
 
     #X1,X2 = data.DIC_get_positions(DIC_dict)
 

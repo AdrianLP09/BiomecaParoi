@@ -10,6 +10,7 @@ from pymodbus.constants import Endian
 import struct
 import ft232R
 import os
+import pathlib
 
 
 
@@ -305,8 +306,8 @@ if pymodbus.__version__=='3.9.0':
 
 if __name__ == "__main__":
 
-    date='2025_06_02'
-    sample = 'SC37_20'
+    date = "2025_06_20"
+    sample= "SC37_20_P7_21j"
 
     saving_folder=f'./{date}/{sample}/'
 
@@ -340,9 +341,9 @@ if __name__ == "__main__":
                                     labels=['tr(s)', 'meta_r', 'pix_r', 'eyy_r', 'exx_r'],
                                     white_spots=False,
                                     **{"serial_number": "14482450",
-                                        "exposure_time_us": 56229,
+                                        "exposure_time_us": 30013,
                                         "trigger": "Hdw after config",
-                                        'timeout':100000})
+                                        'timeout':60000})
 
     vel = crappy.blocks.VideoExtenso(camera='XiAPI',
                                     config=True,
@@ -353,9 +354,9 @@ if __name__ == "__main__":
                                     labels=['tl(s)', 'meta_l', 'pix_l', 'eyy_l', 'exx_l'],
                                     white_spots=False,
                                     **{"serial_number": "32482550",
-                                        "exposure_time_us": 50000,
+                                        "exposure_time_us": 24339,
                                         "trigger": "Hdw after config",
-                                        'timeout':100000})
+                                        'timeout':60000})
 
 
 
@@ -363,13 +364,13 @@ if __name__ == "__main__":
 
     gen_ft = crappy.blocks.Generator([{'type': 'Cyclic',
                                     'value1': 0, 'condition1': 'delay=0.1',
-                                    'value2': 1, 'condition2': 'delay=1', 'cycles': 150}], cmd_label='cmd')
+                                    'value2': 1, 'condition2': 'delay=0.9', 'cycles': 300}], cmd_label='cmd')
 
 
 
     gen_flow = crappy.blocks.Generator([{'type': 'Constant',
                                         'value': 0.1,
-                                        'condition': 'delay=150'}], cmd_label='cmd')
+                                        'condition': 'delay=100'}], cmd_label='cmd')
 
     rec_ali = crappy.blocks.Recorder(file_name=f'./{date}/{sample}/data_ali.txt')
 

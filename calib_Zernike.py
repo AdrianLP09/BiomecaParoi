@@ -13,9 +13,9 @@ from Pycaso import solve_library as solvel
 
 if __name__ == "__main__":
 
-    date = "2025_06_02"
+    date = "2025_06_20"
 
-    nZ = 9 #polynomial degree
+    nZ = 12 #polynomial degree
 
     saving_folder = f'./{date}/results_calib/nZ_{nZ}/'
 
@@ -60,12 +60,14 @@ if __name__ == "__main__":
 
 
     #calibration : Zernike constants, magnification, points detected on the ChAruco, theoretical points, number of points and 3D points
-    A_Zernike, Magnification = pcs.Zernike_calibration(z_list = x3_list,
+    A_Zernike, Magnification,px = pcs.Zernike_calibration(z_list = x3_list,
                                                        Zernike_pform = nZ,
                                                        plotting = False,
-                                                       iterations = 10,
+                                                       iterations = 9,
                                                        **calibration_dict)
 
+
+    print(px)
 
     np.save(saving_folder+'A_Zernike.npy', A_Zernike)
 
@@ -90,7 +92,10 @@ if __name__ == "__main__":
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
+    plt.savefig(f'./{date}/results_calib/nZ_{nZ}/3D_coordinates/'+'Coord3D')
     plt.show()
+
+
 
     #Xff=np.zeros((n,3,X.shape[1]))
     #for i in range(n):

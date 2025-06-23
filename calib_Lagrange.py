@@ -15,7 +15,7 @@ from Pycaso import solve_library as solvel
 
 if __name__ == "__main__":
 
-    date = "2025_06_02"
+    date = "2025_06_16"
 
     l_pform = 4   #polynomial degree
 
@@ -86,8 +86,8 @@ if __name__ == "__main__":
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
+    plt.savefig(f'./{date}/results_calib/Lpform_{l_pform}/3D_coordinates/'+'Coord3D')
     plt.show()
-
 
     #X1,X2 = data.DIC_get_positions(DIC_dict)
 

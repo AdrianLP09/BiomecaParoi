@@ -11,7 +11,7 @@ import numpy as np
 
 
 if __name__ == '__main__':
-  date = "2025_06_02"
+  date = "2025_06_20"
 
 
 
@@ -23,7 +23,7 @@ if __name__ == '__main__':
                               img_shape=(2048,2048),
                               img_dtype='uint8',
                               **{"serial_number": "14482450",
-                                  "exposure": 56229,
+                                  "exposure": 30013,
                                   "trigger": "Hdw after config"})
 
   cam_L = crappy.blocks.Camera(camera="XiAPI",
@@ -34,7 +34,7 @@ if __name__ == '__main__':
                               img_shape=(2048,2048),
                               img_dtype='uint8',
                               **{"serial_number": "32482550",
-                                  "exposure": 75197,
+                                  "exposure": 24339,
                                   "trigger": "Hdw after config"})
 
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
                                 'cmd_label': 'pos',
                                 'position_label': 'position',
                                 'speed': 100,
-                                'port': '/dev/ttyACM0'}],
+                                'port': '/dev/ttyACM1'}],
                                 freq=50)
 
 
@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
   path_mot=[]
   pas=-5
-  for i in range(125, 25+pas, pas):
+  for i in range(120, 15, pas):
     path_mot.append({'type': 'Constant',
                       'value': i,
                       'condition': 'delay=5'})

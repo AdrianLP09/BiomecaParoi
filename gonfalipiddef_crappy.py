@@ -83,30 +83,30 @@ if __name__ == "__main__":
                                       'value': 0.15,
                                       'condition': 'path_id>1'}], cmd_label='exxcmd', spam=True)
 
-  gen_flow = crappy.blocks.Generator([{'type': 'Constant',
-                                        'value': 0.1,
-                                        'condition': 'delay=20'}], cmd_label='flowcmd', spam=True)
+  #gen_flow = crappy.blocks.Generator([{'type': 'Constant',
+                                        #'value': 0.1,
+                                        #'condition': 'delay=20'}], cmd_label='flowcmd', spam=True)
   
-  #gen_dexx = crappy.blocks.Generator([{'type': 'Constant',
-                                     #'value': 0.1,
-                                     #'condition':'delay=20'}], cmd_label='dexxcmd', spam=True)
+  gen_dexx = crappy.blocks.Generator([{'type': 'Constant',
+                                     'value': 0.1,
+                                     'condition':'delay=20'}], cmd_label='dexxcmd', spam=True)
                                    
-  #p = 800
-  #i = 100
-  #d = 0
+  p = 800
+  i = 100
+  d = 0
   
-  #pid = crappy.blocks.PID(kp=p,
-                          #ki=i,
-                          #kd=d,
-                          #out_max=200,
-                          #out_min=0,
-                          #setpoint_label='dexxcmd',
-                          #input_label='dexx',
-                          #labels=['t(s)', 'flowcmd'])
+  pid = crappy.blocks.PID(kp=p,
+                          ki=i,
+                          kd=d,
+                          out_max=200,
+                          out_min=0,
+                          setpoint_label='dexxcmd',
+                          input_label='dexx',
+                          labels=['t(s)', 'flowcmd'])
     
   rec_tridexx = crappy.blocks.Recorder(file_name = f'./{date}/defexxsvp.txt')
   
-  #rec_pid = crappy.blocks.Recorder(file_name = f'./{date}/pid.txt')
+  rec_pid = crappy.blocks.Recorder(file_name = f'./{date}/pid.txt')
   
   rec_ali = crappy.blocks.Recorder(file_name = f'./{date}/ali.txt')
 
@@ -118,14 +118,14 @@ if __name__ == "__main__":
   crappy.link(vel, trid)
   crappy.link(ver, trid)
   
-  #crappy.link(gen_dexx, pid)
-  #crappy.link(trid, pid)
-  #crappy.link(pid, flow_ali)
-  crappy.link(gen_flow, flow_ali)
+  crappy.link(gen_dexx, pid)
+  crappy.link(trid, pid)
+  crappy.link(pid, flow_ali)
+  #crappy.link(gen_flow, flow_ali)
   
   crappy.link(trid, rec_tridexx)
-  #crappy.link(pid, rec_pid)
-  crappy.link(flow_ali, rec_ali)
+  crappy.link(pid, rec_pid)
+  #crappy.link(flow_ali, rec_ali)
 
 
   crappy.start()

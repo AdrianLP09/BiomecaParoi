@@ -75,7 +75,7 @@ def CoordCam(path=str, mask=str, savefile=str):
         barx[i], bary[i]=region.centroid
         areas[i]=region.area
         bar[i] = region.centroid
-    vire = np.where((areas <100)|(areas>1000)) # je vire les points trop petits et les trop gros
+    vire = np.where((areas <150)|(areas>1000)) # je vire les points trop petits et les trop gros
     boundbox=np.delete(boundbox,vire)
     bar=np.delete(bar,vire)
     areas=np.delete(areas,vire)
@@ -87,7 +87,7 @@ def CoordCam(path=str, mask=str, savefile=str):
     for i in range(0,len(boundbox)): # for each ZOI
         gx,gy = bar[i] # barycenter coordinate of each ZOI
         minr, minc, maxr, maxc=boundbox[i] # bbox of each ZOI
-        ax.plot(gy,gx, 'ro', markersize=6)
+        ax.plot(gy,gx, 'ro', markersize=2)
         minr, minc, maxr, maxc = boundbox[i]
         rect = mpatches.Rectangle((minc, minr), maxc - minc, maxr - minr,
                                     fill=False, edgecolor='red', linewidth=2)
@@ -105,7 +105,7 @@ def CoordCam(path=str, mask=str, savefile=str):
         img = invert(difference_of_gaussians(image, 5,6))
         #img = invert(image)
         fig, ax = plt.subplots()
-        #ax.imshow(img, cmap='gray')
+        ax.imshow(img, cmap='gray')
         for i in range(len(areas)):
             '''
             Using previous image information, we loop over every previous regions.
@@ -157,8 +157,7 @@ def CoordCam(path=str, mask=str, savefile=str):
                     barx[i]=np.float('nan')
                     bary[i]=np.float('nan')
                 ax.axis('off')
-                ax.plot(ppy,ppx,'ko', markersize=5)
-        #if j==136:
+                ax.plot(ppy,ppx,'ro', markersize=2)
         #plt.show()
         #plt.savefig(savefile + 'img_%06d.png'%j,dpi=150)
         plt.close()
@@ -172,9 +171,9 @@ def CoordCam(path=str, mask=str, savefile=str):
 
 def f(all_pxl, all_pyl, all_pxr, all_pyr):
   LA_allp = []
-  for i in range(len(all_pyr)):
-    A_allp = np.zeros((2,len(all_pyr[0]),2))
-    for j in range(len(all_pyr[0])):
+  for i in range(len(all_pyl)):
+    A_allp = np.zeros((2,len(all_pyl[0]),2))
+    for j in range(len(all_pyl[0])):
       A_allp[0][j][0] = all_pyl[i][j]
       A_allp[0][j][1] = all_pxl[i][j]
       A_allp[1][j][0] = all_pyr[i][j]
@@ -197,13 +196,13 @@ def RtoL_transfo(rightpoints, matrix):
   return np.array(Rightp)
 
 
-date = '2025_06_02'
-sample = 'SC37_20'
+date = '2025_06_20'
+sample= "SC37_20_P7_21j"
 saving_folder=f'./{date}/{sample}/'
 
 
 
-###reverse the right images, cameras are in mirror
+##reverse the right images, cameras are in mirror
 #Liste_image  = sorted(glob(f'./{date}/{sample}/video_extenso_right/'+"0*"))
 #for image in Liste_image:
     #img=cv2.imread(image)
@@ -211,14 +210,18 @@ saving_folder=f'./{date}/{sample}/'
     #cv2.imwrite(image,img)
 
 
-all_pxl, all_pyl = CoordCam(saving_folder+'video_extenso_left/', 'maskL.tiff',saving_folder+'ROI_left/')
-np.save(saving_folder + 'all_pxl.npy', all_pxl)
-np.save(saving_folder + 'all_pyl.npy', all_pyl)
+#all_pxl, all_pyl = CoordCam(saving_folder+'video_extenso_left/', 'maskL.tiff',saving_folder+'ROI_left/')
+#np.save(saving_folder + 'all_pxl.npy', all_pxl)
+#np.save(saving_folder + 'all_pyl.npy', all_pyl)
 
-all_pxr, all_pyr = CoordCam(saving_folder+'video_extenso_right/', 'maskR.tiff',saving_folder+'ROI_right/')
-np.save(saving_folder + 'all_pxr.npy', all_pxr)
-np.save(saving_folder + 'all_pyr.npy', all_pyr)
+#all_pxr, all_pyr = CoordCam(saving_folder+'video_extenso_right/', 'maskR.tiff',saving_folder+'ROI_right/')
+#np.save(saving_folder + 'all_pxr.npy', all_pxr)
+#np.save(saving_folder + 'all_pyr.npy', all_pyr)
 
+all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
+all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
+all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
+all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
 
 
 Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)
@@ -226,7 +229,7 @@ N = len(Lp[0][0])
 
 ### Appariement des points
 Template = cv2.imread(saving_folder + 'Template_L.tiff') #Template Gimp
-Y_template,X_template = 943,946 #Constantes à modifier en fonction des coordonnées du Template
+Y_template,X_template = 991,1026 #Constantes à modifier en fonction des coordonnées du Template
 
 Img = cv2.imread(saving_folder + 'Template_R.tiff') #Image 0 de la caméra de droite
 
@@ -243,11 +246,23 @@ for i in range(len(Lp[0][0])):
     xr.append(Lp[0][1][i][1])
     yr.append(Lp[0][1][i][0])
 
+xl,yl=[],[]
+for i in range(len(Lp[0][0])):
+    xl.append(Lp[0][0][i][1])
+    yl.append(Lp[0][0][i][0])
+
+
 # On applique le delta aux coordonnées de droite
 xr2,yr2 = [],[]
 for i in range(N):
     yr2.append(yr[i] + Diff[0])
     xr2.append(xr[i] + Diff[1])
+
+for i in range(N):
+
+fig,ax=plt.subplots()
+ax.plot(xr2,yr2,'bo'),ax.plot(xl,yl,'ro')
+plt.show()
 
 Matched_Left = Lp[0][0]
 Matched_Right = np.array([(yr2[i],xr2[i]) for i in range(N)])

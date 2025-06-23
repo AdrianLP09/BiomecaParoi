@@ -5,11 +5,11 @@ from glob import glob
 from math import *
 from scipy.optimize import least_squares
 
-date = '2025_05_15'
-sili = 'SC37_40'
-tricot = 'A1L'
-nZ = 5
-l_pform = 4
+date = '2025_06_17'
+sample= "SC37_20_P7_16j"
+tricot='None'
+nZ = 10
+l_pform = 5
 spform=332
 
 method_dict = {'Zernike','Lagrange','Soloff'}
@@ -26,9 +26,9 @@ if method == 'Zernike':
 if method == 'Soloff':
    polform = f'Spform_{spform}'
 
-X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/X3d.txt', delimiter=' ')
-Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/Y3d.txt', delimiter=' ')
-Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/Z3d.txt', delimiter=' ')
+X3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/X3d.txt', delimiter=' ')
+Y3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/Y3d.txt', delimiter=' ')
+Z3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/Z3d.txt', delimiter=' ')
 
 
 #Création du maillage
@@ -161,9 +161,9 @@ for i in range(len(Im3d)):
   N0i[-1][0] = N1[-1][0]/Npnorm1[-1][0]
   N0i[-1][-1] = N2[-1][-1]/Npnorm2[-1][-1]
   N.append(N0i)
-
+#print(N)
   
-#Calcul de F2 
+#Calcul de F2
 F2 = []
 for i in range(len(N)):
   detU1p = np.stack((detU1[i], detU1[i], detU1[i]), axis=-1)
@@ -177,7 +177,7 @@ for i in range(len(F2)):
   A[:,:,:,-1] = F2[i][:][:]
   A[:,:,:,:2] = F1[i][:][:]
   F.append(A)
-  
+print(len(F),F[-1][-1][-1])
   
 #Calcul du tenseur de Green-Lagrange
 Id = []
@@ -188,7 +188,7 @@ for i in range(len(F)):
 
 E = []
 for i in range(len(F)):
-  E.append(0.5*(np.matmul(F[i].transpose(0,1,3,2), F[i]) - Id[i]))	
+  E.append(0.5*(np.matmul(F[i].transpose(0,1,3,2), F[i]) - Id[i]))
 
 
 #Calcul du tenseur de Hencky version abaqus
@@ -203,10 +203,10 @@ for i in range(len(F)):
   RD[:,:,1,1] = D[:,:,1]
   RD[:,:,2,2] = D[:,:,2]
   Pinv = np.linalg.inv(P)
-  LE.append(0.5*(np.matmul(np.matmul(P, RD), Pinv)))    
+  LE.append(0.5*(np.matmul(np.matmul(P, RD), Pinv)))
   
 
-#Calcul du tenseur de Hencky  
+#Calcul du tenseur de Hencky
 H = []
 for i in range(len(F)):
   A = np.zeros((100,100,3,3))
@@ -218,7 +218,7 @@ for i in range(len(F)):
   RD[:,:,1,1] = D[:,:,1]
   RD[:,:,2,2] = D[:,:,2]
   Pinv = np.linalg.inv(P)
-  H.append(0.5*(np.matmul(np.matmul(P, RD), Pinv)))    
+  H.append(0.5*(np.matmul(np.matmul(P, RD), Pinv)))
 
 
 #Calcul du tenseur de Cauchy-Green droit
@@ -233,10 +233,10 @@ for i in range(len(C)):
   I1.append(np.trace(C[i], axis1=-2, axis2=-1))
   
 
-#Calcul du second invariant des déformations  
+#Calcul du second invariant des déformations
 I2 = []
 for i in range(len(C)):
-  I2.append(0.5*(np.trace(C[i], axis1=-2, axis2=-1)**2 - np.trace(np.matmul(C[i], C[i]), axis1=-2, axis2=-1)))  
+  I2.append(0.5*(np.trace(C[i], axis1=-2, axis2=-1)**2 - np.trace(np.matmul(C[i], C[i]), axis1=-2, axis2=-1)))
 
 
 ##PLOTS

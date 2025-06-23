@@ -5,12 +5,11 @@ from glob import glob
 from math import *
 from scipy.optimize import least_squares
 
-date = '2025_05_15'
-sili = 'SC37_40'
-tricot = 'A1L'
-nZ = 5
+date = '2025_06_20'
+sample= "SC37_20_P7_21j"
+nZ = 10
 l_pform = 4
-spform=222
+spform=443
 
 method_dict = {'Zernike','Lagrange','Soloff'}
 method = input('Choose a method\n')
@@ -26,9 +25,9 @@ if method == 'Zernike':
 if method == 'Soloff':
    polform = f'Spform_{spform}'
 
-X3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/X3d.txt', delimiter=' ')
-Y3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/Y3d.txt', delimiter=' ')
-Z3d = np.loadtxt(fname=f'./{date}/{sili}_{tricot}/{polform}/Z3d.txt', delimiter=' ')
+X3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/X3d.txt', delimiter=' ')
+Y3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/Y3d.txt', delimiter=' ')
+Z3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/Z3d.txt', delimiter=' ')
 
 
 #Création du maillage
@@ -36,6 +35,8 @@ X0min = min(X3d[0])
 X0max = max(X3d[0])
 Y0min = min(Y3d[0])
 Y0max = max(Y3d[0])
+Zmin = min(Z3d[0])
+Zmax = max(Z3d[-1])
 
 Xmesh, Ymesh = np.meshgrid(np.linspace(X0min, X0max,100), np.linspace(Y0min, Y0max,100), indexing='xy')
 Ymesh = np.flip(Ymesh)
@@ -70,12 +71,12 @@ for i in range(len(XX)):
   Uy.append(YY[i] - YY[0])
   Uz.append(ZZ[i] - ZZ[0])
 
-Uzmax = [Uz[i][50][50] for i in range(len(Uz))]
+Uzmax = [np.max(Uz[i]) for i in range(len(Uz))]
 if method != 'Soloff' :
-  Uzmax=-Uzmax
+  Uzmax=[np.max(-Uz[i]) for i in range(len(Uz))]
 
 #Récupération de la pression à chaque image
-Limage = sorted(glob(f'./{date}/video_extenso_left/' + '0*'))
+Limage = sorted(glob(f'./{date}/{sample}/video_extenso_left/' + '0*'))
 Lname = []
 for i in range(len(Limage)):
   Lname.append(Limage[i].split('/')[-1])
@@ -88,8 +89,8 @@ Ltime2 = []
 for i in range(len(Ltime)):
   Ltime2.append(float(Ltime[i].split('.t')[0]))
 
-Tp = np.loadtxt(f'./{date}/data_ali.txt', delimiter=',', skiprows=1)[:,0]
-Pp = np.loadtxt(f'./{date}/data_ali.txt', delimiter=',', skiprows=1)[:,1]
+Tp = np.loadtxt(f'./{date}/{sample}/data_ali.txt', delimiter=',', skiprows=1)[:,0]
+Pp = np.loadtxt(f'./{date}/{sample}/data_ali.txt', delimiter=',', skiprows=1)[:,1]
 Pp=Pp-Pp[0]
 
 
@@ -103,6 +104,12 @@ Press = Rbfpress(Ltime2)
 ax = plt.axes()
 ax.set_xlabel('Uzmax (mm)')
 ax.set_ylabel('Pressure (mbar)')
-plt.plot(Uzmax[:], Press[:], label=tricot)
-plt.legend(fontsize=15)
-plt.show() 
+plt.plot(Uzmax[:], Press[:], label=sample)
+plt.legend(fontsize=10)
+plt.savefig(f'./{date}/{sample}/{polform}/'+'Pression_Uz')
+plt.show()
+
+Ax3D = plt.figure().add_subplot(projection='3d')
+Ax3D.plot_surface(XX[50],YY[50],ZZ[50])
+plt.show()
+

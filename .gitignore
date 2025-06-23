@@ -2,6 +2,11 @@ venv/
 package/
 __pycache__/
 Pycaso/
+data/
+Resultats_data_Pierre/
+opti_angle_calib/
+checkimage/
+
 
 
 .testrotate.py.kate-swp
@@ -22,4 +27,15 @@ Pycaso/
 2025_04_22/
 2025_04_24/
 2025_04_28/
+2025_05_05/
+2025_05_15/
+2025_06_02/
+2025_06_04/
+2025_06_05/
+2025_06_10/
+2025_06_13/
+2025_06_16/
+2025_06_17/
+2025_06_18/
+2025_06_20/
 

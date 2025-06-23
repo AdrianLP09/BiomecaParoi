@@ -6,6 +6,8 @@ from skimage.measure import label, regionprops
 from skimage.segmentation import clear_border
 from skimage.util import invert
 from glob import glob
+import os
+import pathlib
 import cv2
 import math
 from math import *
@@ -95,8 +97,8 @@ def RtoL_transfo_Matrix(leftpoints, rightpoints):
 if __name__ == '__main__' :  
 
 
-    date = "2025_06_02"
-    sample= "SC37_20"
+    date = "2025_06_20"
+    sample= "SC37_20_P7_21j"
     #all_pxl, all_pyl = CoordCam(f'./{date}/matrix_calibL/', 'maskL_calib.tiff')
     #all_pxr, all_pyr = CoordCam(f'./{date}/matrix_calibR/', 'maskR_calib.tiff')
 
@@ -108,6 +110,11 @@ if __name__ == '__main__' :
     M = RtoL_transfo_Matrix(Lpc[0][0], Lpc[0][1])
 
     #np.save(f'./{date}/transfomatrix', M)
+    if os.path.exists(f'./{date}/{sample}/') :
+        ()
+    else :
+        P = pathlib.Path(f'./{date}/{sample}/')
+        pathlib.Path.mkdir(P, parents = True)
 
     np.save(f'./{date}/{sample}/transfomatrix', M)
 

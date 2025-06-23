@@ -95,7 +95,7 @@ Créer un masque **GIMP** de la première image de chaque caméra dans les dossi
 
 <img src="images/ImageL_gonf.png" width="200" height="200" hspace = "100" > <img src="images/maskL_gonf.png" width="200" height="200" hspace = "100" > 
 
-Dans **GIMP**, créer un fichier `Template_L.tiff` à partir de la première image de la caméra de gauche, en prenant le centre de l'échantillon, et créer une copie de la première image de droite en la renommant `Template_R.tiff`. Enregistrer ces deux documents dans le dossier '{date}/{sample}/'
+Dans **GIMP**, créer un fichier `Template_L.tiff` à partir de la première image de la caméra de gauche, en prenant le centre de l'échantillon, et créer une copie de la première image de droite en la renommant `Template_R.tiff`. Enregistrer ces deux documents dans le dossier `{date}/{sample}/`
 
 <img src="images/Template_L.png" width="200" height="200" hspace = "100" > <img src="images/Template_R.png" width="200" height="200" hspace = "100" >
 
@@ -107,9 +107,9 @@ Ces scripts appliquent une interpolation à ces points suivant la méthode d'int
 Remarques : 
 - Veiller à garder cohérents le choix de la date, de l'échantillon, et du degré du polynôme entre chaque script.
 - Il est possible d'ajuster les tailles minimales et maximales des points à détecter dans CoordCam
-- Il est nécessaire d'ajuster manuellement l'appariement dans `CoordCam.py`. Pour cela on sert de matchTemplate de la bibliothèque [opencv](https://github.com/opencv/opencv) pour obtenir le décalage entre les images de gauche et de droite. Cette méthode n'est pas idéale, car elle ne prend pas en compte le changement de perspective, mais l'erreur est négligeable si l'angle d'orientation des caméras est faible.
+- Il est nécessaire d'ajuster manuellement l'appariement dans `CoordCam.py`. Pour cela on se sert de matchTemplate de la bibliothèque [opencv](https://github.com/opencv/opencv) pour obtenir le décalage entre les images de gauche et de droite. Cette méthode n'est pas idéale, car elle ne prend pas en compte le changement de perspective, mais l'erreur est négligeable si l'angle d'orientation des caméras est faible.
 - Dans `CoordCam.py`, on doit rentrer manuellement les coordonnées d'origine de `Template_L` à partir des valeurs indiquées dans **GIMP**
 
 ### Post-traitement et récupération des caractéristiques mécaniques
 
-Lancer les scripts [getdef.py](getdef.py), [getaniso.py](getaniso.py) et [getuzpress.py](getuzpress.py) pour obtenir respectivement les déformations, la caractérisation de l'anisotropie de l'échantillon, et la courbe pression/UzMax.(**Scripts à revoir**)
+Lancer les scripts [getdef.py](getdef.py), [getaniso.py](getaniso.py) et [getuzpress.py](getuzpress.py) pour obtenir respectivement les déformations, la caractérisation de l'anisotropie de l'échantillon, et la courbe pression/UzMax.(**Scripts à revoir**)git
