@@ -59,25 +59,24 @@ Remarques :
 - Lors du premier étalonnage, inverser les images provenant de la caméra de droite, en indiquant _reverse = True_
 
 ### Préparation de l'essai
-Une fois l'échantillon placé dans la cellule de gonflement, lancer le script [camftdi_crappy.py](camftdi_crappy.py) avant le serrage, pour prendre une première image avec chaque caméra.
-Créer un masque **GIMP** de chaque image en coloriant en blanc les 4 points noirs peints sur le mord.
+Une fois l'échantillon placé dans la cellule de gonflement, lancer le script [camftdi_crappy.py](camftdi_crappy.py) avant le serrage, pour prendre une première image avec chaque caméra. Ces deux images permettent de faire l'appariement des points observés une fois l'essai réalisé. Sur **GIMP**, on exporte l'image de droite sous le nom *Template_R*, et on exporte une image des  points centraux de l'image de gauche sous le nom *Template_L*.
 
 
  
-<img src="images/ImageR_calib.png" width="200" height="200" hspace = "100"> <img src="images/maskR_calib.png" width="200" height="200" hspace = "100" > 
+<img src="images/Template_L.png" width="200" height="200" hspace = "100"> <img src="images/Template_R.png" width="200" height="200" hspace = "100" >
 
-Lancer [get_transfomatrix.py](get_transfomatrix.py) pour obtenir la matrice de passage de l'image de gauche à l'image de droite.
 Serrer l'échantillon et le fixer sur la cellule de gonflement. Connecter ensuite le débitmètre à l'ordinateur, et relier le compresseur, le débitmètre et la cellule de gonflement. 
 
 Remarques:
 - Vérifier le nom des fichiers et des dossiers
 - S'assurer que les caméras, le FT232R et le débitmètre sont connectés à l'ordinateur.
-- À l'heure actuelle, la méthode d'appariement reposant sur la fonction _get_transfomatrix_ est désuette. On s'appuie plutôt sur _matchTemplate_ (cf Transformation des points 2D en 3D)
+- Bien penser à renverser de 180° *Template_R* sur GIMP, car les caméras sont en miroir.
 
 ### Réalisation de l'essai
 
+
 Lancer le script [alicat_flow_crappy.py](alicat_flow_crappy.py), qui définie la classe crappy du débitmètre, et lance le gonflement. Les fenêtres Videoextenso vont s'ouvrir : cela permet de piloter en vitesse de déformation le gonflement, ce qui n'est pour le moment pas réalisable (**À améliorer**). Sélectionner les 4 points centraux de l'échantillon puis fermer les fenêtres. Indiquer le type d'échantillon sur lequel l'essai est réalisé (**typesilicone_typetricot**)
-Le script permet d'obtenir les images de l'essai pour chaque caméra, les données de vidéoextensométrie, et les données du débitmètre (pression, débit volumique, début massique).
+Le script permet d'obtenir les images de l'essai pour chaque caméra, les données de vidéoextensométrie, et les données du débitmètre (pression, débit volumique, début massique), et d'imposer la limite en pression exercée sur l'échantillon de l'essai.
 
 <img src="images/Debutgonf.png" width="200" height="200" hspace = "100" > <img src="images/FinGonf.png" width="200" height="200" hspace = "100" >  
 
@@ -85,6 +84,7 @@ Remarques :
 - Vérifier que le débitmètre et le FT232R sont bien connectés avec `lsusb` et modifier les noms des ports si nécessaire.
 - Vérifier avoir bien récupérer deux dossiers avec le même nombre d'images.
 - Faire attention aux constantes `date` et `sample`
+- On peut adapter la pression maximale de l'essai en modifiant la condition dans la définition du block `gen_flow`
 
 
 ## Traitement des données
@@ -97,9 +97,6 @@ Créer un masque **GIMP** de la première image de chaque caméra dans les dossi
 
 <img src="images/ImageL_gonf.png" width="200" height="200" hspace = "100" > <img src="images/maskL_gonf.png" width="200" height="200" hspace = "100" > 
 
-Dans **GIMP**, créer un fichier `Template_L.tiff` à partir de la première image de la caméra de gauche, en prenant le centre de l'échantillon, et créer une copie de la première image de droite en la renommant `Template_R.tiff`. Enregistrer ces deux documents dans le dossier `{date}/{sample}/`
-
-<img src="images/Template_L.png" width="200" height="200" hspace = "100" > <img src="images/Template_R.png" width="200" height="200" hspace = "100" >
 
 Lancer le script [CoordCam.py](CoordCam.py) qui effectue l'identification et le suivi des points sur les deux caméras, en fonction du masque défini plus haut. Il permet des récupérer les coordonnées $x$ et $y$ de chaque point d'après la caméra de gauche, et d'après la caméra de droite, puis effectue une correction de ce suivi afin d'assurer l'appariement entre les points de gauche et de droite.
 
@@ -109,9 +106,10 @@ Ces scripts appliquent une interpolation à ces points suivant la méthode d'int
 Remarques : 
 - Veiller à garder cohérents la date, le nom l'échantillon, et le degré du polynôme entre chaque script.
 - Il est possible d'ajuster les tailles minimales et maximales des points à détecter dans CoordCam
-- Il est nécessaire d'ajuster manuellement l'appariement dans `CoordCam.py`. Pour cela on se sert de matchTemplate de la bibliothèque [opencv](https://github.com/opencv/opencv) pour obtenir le décalage entre les images de gauche et de droite. Cette méthode n'est pas idéale, car elle ne prend pas en compte le changement de perspective, mais l'erreur est négligeable si l'angle d'orientation des caméras est faible.
-- Dans `CoordCam.py`, on doit rentrer manuellement les coordonnées d'origine de `Template_L` à partir des valeurs indiquées dans **GIMP**
+- Il est nécessaire d'ajuster manuellement l'appariement dans `CoordCam.py`. Pour cela on se sert de matchTemplate de la bibliothèque [opencv](https://github.com/opencv/opencv) pour obtenir le décalage entre les images de gauche et de droite. On utilise ensuite le *linking* via [trackpy](https://github.com/soft-matter/trackpy) pour récupérer la correspondance entre les points des déux caméras. Cette méthode n'est pas idéale, car elle ne prend pas en compte le changement de perspective, mais l'erreur est négligeable si l'angle d'orientation des caméras est faible.
+- Dans `CoordCam.py`, on doit rentrer manuellement les coordonnées d'origine de `Template_L` à partir des valeurs indiquées dans **GIMP**. Il peut également être nécessaire de modifier le paramètre `search_range` de la fonction `link_df_iter` trackpy.
 
 ### Post-traitement et récupération des caractéristiques mécaniques
 
-Lancer les scripts [getdef.py](getdef.py), [getaniso.py](getaniso.py) et [getuzpress.py](getuzpress.py) pour obtenir respectivement les déformations, la caractérisation de l'anisotropie de l'échantillon, et la courbe pression/UzMax.(**Scripts à revoir**)
+Lancer les scripts [getdef.py](getdef.py), [getaniso.py](getaniso.py) et [getuzpress.py](getuzpress.py) pour obtenir respectivement les champs de déformations, la caractérisation de l'anisotropie de l'échantillon, et la courbe pression/UzMax.
+Une fois les données et caractéristiques mécaniques récupérées, effectuer les comparaisons entre les différents échantillons.

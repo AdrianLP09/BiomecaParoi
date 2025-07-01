@@ -370,7 +370,7 @@ if __name__ == "__main__":
 
     gen_flow = crappy.blocks.Generator([{'type': 'Constant',
                                         'value': 0.1,
-                                        'condition': 'press > 1346'}], cmd_label='cmd') #pressmax = abs pressure + 336 (Jumping) ou 188(Standing Cough)
+                                        'condition': 'press > 1346'}], cmd_label='cmd') #pressmax = pression débitmètre + 336 ("Jumping") ou 188("Standing Cough")
 
     rec_ali = crappy.blocks.Recorder(file_name=f'./{date}/{sample}/data_ali.txt')
 
