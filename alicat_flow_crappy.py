@@ -306,8 +306,8 @@ if pymodbus.__version__=='3.9.0':
 
 if __name__ == "__main__":
 
-    date = "2025_06_20"
-    sample= "SC37_20_P7_21j"
+    date = "2025_07_01"
+    sample= "SC37_20_P7_30j"
 
     saving_folder=f'./{date}/{sample}/'
 
@@ -341,7 +341,7 @@ if __name__ == "__main__":
                                     labels=['tr(s)', 'meta_r', 'pix_r', 'eyy_r', 'exx_r'],
                                     white_spots=False,
                                     **{"serial_number": "14482450",
-                                        "exposure_time_us": 30013,
+                                        "exposure_time_us": 41389,
                                         "trigger": "Hdw after config",
                                         'timeout':60000})
 
@@ -354,7 +354,7 @@ if __name__ == "__main__":
                                     labels=['tl(s)', 'meta_l', 'pix_l', 'eyy_l', 'exx_l'],
                                     white_spots=False,
                                     **{"serial_number": "32482550",
-                                        "exposure_time_us": 24339,
+                                        "exposure_time_us": 31740,
                                         "trigger": "Hdw after config",
                                         'timeout':60000})
 
@@ -364,13 +364,13 @@ if __name__ == "__main__":
 
     gen_ft = crappy.blocks.Generator([{'type': 'Cyclic',
                                     'value1': 0, 'condition1': 'delay=0.1',
-                                    'value2': 1, 'condition2': 'delay=0.9', 'cycles': 300}], cmd_label='cmd')
+                                    'value2': 1, 'condition2': 'delay=0.3', 'cycles': 2000}], cmd_label='cmd')
 
 
 
     gen_flow = crappy.blocks.Generator([{'type': 'Constant',
                                         'value': 0.1,
-                                        'condition': 'delay=100'}], cmd_label='cmd')
+                                        'condition': 'press > 1346'}], cmd_label='cmd') #pressmax = abs pressure + 336 (Jumping) ou 188(Standing Cough)
 
     rec_ali = crappy.blocks.Recorder(file_name=f'./{date}/{sample}/data_ali.txt')
 
@@ -383,6 +383,7 @@ if __name__ == "__main__":
 
 
     crappy.link(flow_ali, rec_ali)
+    crappy.link(flow_ali, gen_flow)
     crappy.link(ver, rec_ver)
     crappy.link(vel, rec_vel)
 

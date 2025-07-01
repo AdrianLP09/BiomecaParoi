@@ -4,12 +4,12 @@ from scipy.interpolate import Rbf
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
 
-date = '2025_06_20'
-sample = "SC37_20_P7_21j"
+date = '2025_07_01'
+sample = "SC37_20_P7_30j"
 tricot ='None'
 nZ = 10
 l_pform = 4
-spform = 333
+spform = 555
 
 method_dict = {'Zernike','Lagrange','Soloff'}
 method = input('Choose a method\n')
@@ -74,7 +74,7 @@ if tricot == 'P1':
 if tricot == 'P7R':
   ip = 0
 
-ip = 52
+ip = 79
 X3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/X3d.txt', delimiter=' ')[:ip+1]
 Y3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/Y3d.txt', delimiter=' ')[:ip+1]
 Z3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/Z3d.txt', delimiter=' ')[:ip+1]
@@ -83,6 +83,8 @@ X0min = min(X3d[0])
 X0max = max(X3d[0])
 Y0min = min(Y3d[0])
 Y0max = max(Y3d[0])
+Zmin = min(Z3d[ip])
+Zmax = max(Z3d[ip])
 
 cx = (X0max-X0min)/2 + X0min
 cy = (Y0max-Y0min)/2 + Y0min
@@ -147,9 +149,10 @@ if method != 'Soloff' :
   Upz=-Upz
 
 
-PER = [i for i in np.arange(0.60, 0.95, 0.05)]
+PER = [i for i in np.arange(0.25, 0.81, 0.01)]
 Lr = []
 PER2 = []
+Lstd = []
 for per in PER:
   print(per)
   try:
@@ -163,16 +166,17 @@ for per in PER:
     print('aniso:', min(b/a, a/b))
     print('angle:', teh*180/np.pi)
     Lr.append(min(b/a, a/b))
+    Lstd.append(np.std(b/a))
     PER2.append(per)
-    fig, ax = plt.subplots(subplot_kw={'aspect': 'equal'})
+    #fig, ax = plt.subplots(subplot_kw={'aspect': 'equal'})
     e = Ellipse(xy = [x0, y0], width = 2*a, height = 2*b, angle = 180*teh/np.pi, facecolor='white', edgecolor='b', linewidth=12)
-    ax.add_artist(e)
-    plt.scatter(xp[w], yp[w], c='r', linewidths=0.02)
-    ax.set_xlabel('x (mm)')
-    ax.set_ylabel('y (mm)')
-    plt.xlim(10,80)
-    plt.ylim(10,80)
-    plt.show()
+    #ax.add_artist(e)
+    #plt.scatter(xp[w], yp[w], c='r', linewidths=0.02)
+    #ax.set_xlabel('x (mm)')
+    #ax.set_ylabel('y (mm)')
+    #plt.xlim(10,80)
+    #plt.ylim(10,80)
+    #plt.show()
   except np.linalg.LinAlgError :
     print('Pas de correspondance')
 
@@ -189,9 +193,9 @@ theta0 = [1, 1]
 
 
 ax = plt.axes()
-ax.set_xlabel('%Uzmax')
+ax.set_xlabel('Z')
 ax.set_ylabel('b/a')
-inter_PER = np.linspace(0.55, 0.9, 100)
+inter_PER = np.linspace(0.25, 0.8, 100)
 
 
 #if tricot == '4DFIXNR':
@@ -234,7 +238,7 @@ plt.plot(inter_PER, flin(res.x, inter_PER), c='b')
   #plt.plot(inter_PER, flin(resP1.x, inter_PER), c='r')
 
 
-  
+
 
 plt.legend()
 plt.savefig(f'./{date}/{sample}/{polform}/'+f'Aniso_pente_{ip+1}')

@@ -3,32 +3,41 @@
 import crappy
 import time
 import ft232R
+import os
+import pathlib
 
 
 if __name__ == "__main__":
 
-  date = "2025_06_20"
+  date = "2025_07_01"
+  sample= "SC37_20_P7_30j"
+  saving_folder=f'./{date}/{sample}/'
+  if os.path.exists(saving_folder) :
+    ()
+  else :
+    P = pathlib.Path(saving_folder)
+    pathlib.Path.mkdir(P, parents = True)
 
   cam_R = crappy.blocks.Camera(camera="XiAPI", 
                                config=False,
                                save_images=True,
-                               save_folder=f"./{date}/matrix_calibR/",
+                               save_folder=saving_folder+"matrix_calibR/",
                                timeout=100000,
                                img_shape=(2048,2048), 
                                img_dtype='uint8',
                                **{"serial_number": "14482450",
-                                  "exposure": 22822,
+                                  "exposure": 38726,
                                   "trigger": "Hardware"})
                                                                                              
   cam_L = crappy.blocks.Camera(camera="XiAPI", 
                                config=False,
                                save_images=True,                               
-                               save_folder=f"./{date}/matrix_calibL/",
+                               save_folder=saving_folder+"matrix_calibL/",
                                timeout=100000,
                                img_shape=(2048,2048), 
                                img_dtype='uint8', 
                                **{"serial_number": "32482550",
-                                  "exposure": 22822,
+                                  "exposure": 24339,
                                   "trigger": "Hardware"})
                                                                                              
   ftdi = crappy.blocks.IOBlock('Ft232r', cmd_labels=['cmd'], spam=False, direction=0b00000100, URL='ftdi://ftdi:232:FTU7DIHC/1')

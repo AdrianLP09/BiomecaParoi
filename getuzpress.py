@@ -5,11 +5,11 @@ from glob import glob
 from math import *
 from scipy.optimize import least_squares
 
-date = '2025_06_20'
-sample= "SC37_20_P7_21j"
+date = '2025_07_01'
+sample= "SC37_20_P7_30j"
 nZ = 10
 l_pform = 4
-spform=443
+spform=555
 
 method_dict = {'Zernike','Lagrange','Soloff'}
 method = input('Choose a method\n')
@@ -76,7 +76,7 @@ if method != 'Soloff' :
   Uzmax=[np.max(-Uz[i]) for i in range(len(Uz))]
 
 #Récupération de la pression à chaque image
-Limage = sorted(glob(f'./{date}/{sample}/video_extenso_left/' + '0*'))
+Limage = sorted(glob(f'./{date}/{sample}/video_extenso_left_00001/' + '0*'))
 Lname = []
 for i in range(len(Limage)):
   Lname.append(Limage[i].split('/')[-1])
@@ -89,8 +89,8 @@ Ltime2 = []
 for i in range(len(Ltime)):
   Ltime2.append(float(Ltime[i].split('.t')[0]))
 
-Tp = np.loadtxt(f'./{date}/{sample}/data_ali.txt', delimiter=',', skiprows=1)[:,0]
-Pp = np.loadtxt(f'./{date}/{sample}/data_ali.txt', delimiter=',', skiprows=1)[:,1]
+Tp = np.loadtxt(f'./{date}/{sample}/data_ali_00001.txt', delimiter=',', skiprows=1)[:,0]
+Pp = np.loadtxt(f'./{date}/{sample}/data_ali_00001.txt', delimiter=',', skiprows=1)[:,1]
 Pp=Pp-Pp[0]
 
 
@@ -108,8 +108,3 @@ plt.plot(Uzmax[:], Press[:], label=sample)
 plt.legend(fontsize=10)
 plt.savefig(f'./{date}/{sample}/{polform}/'+'Pression_Uz')
 plt.show()
-
-Ax3D = plt.figure().add_subplot(projection='3d')
-Ax3D.plot_surface(XX[50],YY[50],ZZ[50])
-plt.show()
-

@@ -97,8 +97,10 @@ def RtoL_transfo_Matrix(leftpoints, rightpoints):
 if __name__ == '__main__' :  
 
 
-    date = "2025_06_20"
-    sample= "SC37_20_P7_21j"
+    date = "2025_06_26"
+
+
+
     #all_pxl, all_pyl = CoordCam(f'./{date}/matrix_calibL/', 'maskL_calib.tiff')
     #all_pxr, all_pyr = CoordCam(f'./{date}/matrix_calibR/', 'maskR_calib.tiff')
 
@@ -106,16 +108,48 @@ if __name__ == '__main__' :
     all_pxr, all_pyr = CoordCam(f'./{date}/matrix_calibR/', 'maskR.tiff')
 
     print(all_pxl, all_pyl, all_pxr, all_pyr)
-    Lpc = f(all_pxl, all_pyl, all_pxr, all_pyr)
-    M = RtoL_transfo_Matrix(Lpc[0][0], Lpc[0][1])
+    Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)
 
-    #np.save(f'./{date}/transfomatrix', M)
-    if os.path.exists(f'./{date}/{sample}/') :
-        ()
-    else :
-        P = pathlib.Path(f'./{date}/{sample}/')
-        pathlib.Path.mkdir(P, parents = True)
+    Template = cv2.imread(saving_folder + 'Template_L.tiff') #Template Gimp à partir de l'image de gauche
+    Y_template,X_template = 925,925 #Constantes à modifier en fonction des coordonnées du Template
 
-    np.save(f'./{date}/{sample}/transfomatrix', M)
+    Img = cv2.imread(saving_folder + 'Template_R.tiff') #Image de la caméra de droite
+
+    #On fait correspondre le template sur l'image de droite et on observe le décalage entre les deux images
+    result = cv2.matchTemplate(Img, Template, cv2.TM_CCOEFF)
+    (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
+    (start,startX) = maxLoc
+    print(maxLoc)
+    CoordTemplate = (Y_template, X_template, Y_template + Template.shape[0], X_template + Template.shape[1])
+    print(CoordTemplate)
+    Diff = (CoordTemplate[0] - maxLoc[0],CoordTemplate[1] - maxLoc[1])
+    print(Diff)
+
+    xr,yr = [],[]
+    for i in range(len(Lp[0][0])):
+        xr.append(Lp[0][1][i][1])
+        yr.append(Lp[0][1][i][0])
+
+    xl,yl=[],[]
+    for i in range(len(Lp[0][0])):
+        xl.append(Lp[0][0][i][1])
+        yl.append(Lp[0][0][i][0])
 
 
+    # On applique le delta aux coordonnées de droite
+    xr2,yr2 = [],[]
+    for i in range(N):
+        yr2.append(yr[i] + Diff[0])
+        xr2.append(xr[i] + Diff[1])
+
+
+    fig,ax=plt.subplots()
+    ax.plot(xr2,yr2,'bo'),ax.plot(xl,yl,'ro')
+    plt.show()
+
+
+
+#M = RtoL_transfo_Matrix(Lpc[0][0], Lpc[0][1])
+
+#np.save(f'./{date}/transfomatrix', M)
+#np.save(f'./{date}/{sample}/transfomatrix', M)

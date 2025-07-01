@@ -11,7 +11,7 @@ import numpy as np
 
 
 if __name__ == '__main__':
-  date = "2025_06_20"
+  date = "2025_07_01"
 
 
 
@@ -23,7 +23,7 @@ if __name__ == '__main__':
                               img_shape=(2048,2048),
                               img_dtype='uint8',
                               **{"serial_number": "14482450",
-                                  "exposure": 30013,
+                                  "exposure": 36245,
                                   "trigger": "Hdw after config"})
 
   cam_L = crappy.blocks.Camera(camera="XiAPI",
@@ -46,7 +46,7 @@ if __name__ == '__main__':
                                 'cmd_label': 'pos',
                                 'position_label': 'position',
                                 'speed': 100,
-                                'port': '/dev/ttyACM1'}],
+                                'port': '/dev/ttyACM0'}],
                                 freq=50)
 
 

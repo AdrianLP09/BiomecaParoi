@@ -49,13 +49,14 @@ dev.close
 ```
 placer le plateau en $z = 70mm$.
 
-Lancer ensuite les scripts [calib_Lagrange.py](calib_Lagrange.py), [calib_Zernike.py](calib_Zernike.py) ou [calib_soloff.py](calib_soloff.py) pour effectuer l'étalonnage, selon les différentes méthodes prévues par Pycaso. Faire varier la valeur du polynôme et le nombre d'itérations de chaque méthode pour affiner les résultats. Cela permet de récupérer les coordonnées 3D théoriques et réelles de l'étalonnage, le nombre de points identifiés, les graphiques d'erreur de retropojection, ainsi que les constantes des polynômes d'interpolation.
+Lancer ensuite les scripts [calib_Lagrange.py](calib_Lagrange.py), [calib_Zernike.py](calib_Zernike.py) ou [calib_Soloff.py](calib_Soloff.py) pour effectuer l'étalonnage, selon les différentes méthodes prévues par Pycaso. Faire varier la valeur du polynôme et le nombre d'itérations de chaque méthode pour affiner les résultats. Cela permet de récupérer les coordonnées 3D théoriques et réelles de l'étalonnage, le nombre de points identifiés, les graphiques d'erreur de retropojection, ainsi que les constantes des polynômes d'interpolation.
 Une fois cette partie achevée, éteindre l'imprimante.
 
 Remarques : 
 - Si les caméras ne s'ouvrent pas, les débrancher et rebrancher puis relancer le script.
 - Mettre à jour la constante `date` dans chaque script.
 - Vérifier le path et le nom des fichiers.
+- Lors du premier étalonnage, inverser les images provenant de la caméra de droite, en indiquant _reverse = True_
 
 ### Préparation de l'essai
 Une fois l'échantillon placé dans la cellule de gonflement, lancer le script [camftdi_crappy.py](camftdi_crappy.py) avant le serrage, pour prendre une première image avec chaque caméra.
@@ -71,10 +72,11 @@ Serrer l'échantillon et le fixer sur la cellule de gonflement. Connecter ensuit
 Remarques:
 - Vérifier le nom des fichiers et des dossiers
 - S'assurer que les caméras, le FT232R et le débitmètre sont connectés à l'ordinateur.
+- À l'heure actuelle, la méthode d'appariement reposant sur la fonction _get_transfomatrix_ est désuette. On s'appuie plutôt sur _matchTemplate_ (cf Transformation des points 2D en 3D)
 
 ### Réalisation de l'essai
 
-Lancer le script [alicat_flow_crappy.py](alicat_flow_crappy.py), qui définie la classe crappy du débitmètre, et lance le gonflement. Les fenêtres Videoextenso vont s'ouvrir : cela permet de piloter en vitesse de déformation le gonflement, ce qui n'est pour le moment pas réalisable (**À améliorer**). Sélectionner les 4 points centraux de l'échantillon puis fermer les fenêtres. Indiquer le type d'échantillon sur lequel l'essai est réalisé (***<typesilicone>_<typetricot>***)
+Lancer le script [alicat_flow_crappy.py](alicat_flow_crappy.py), qui définie la classe crappy du débitmètre, et lance le gonflement. Les fenêtres Videoextenso vont s'ouvrir : cela permet de piloter en vitesse de déformation le gonflement, ce qui n'est pour le moment pas réalisable (**À améliorer**). Sélectionner les 4 points centraux de l'échantillon puis fermer les fenêtres. Indiquer le type d'échantillon sur lequel l'essai est réalisé (**typesilicone_typetricot**)
 Le script permet d'obtenir les images de l'essai pour chaque caméra, les données de vidéoextensométrie, et les données du débitmètre (pression, débit volumique, début massique).
 
 <img src="images/Debutgonf.png" width="200" height="200" hspace = "100" > <img src="images/FinGonf.png" width="200" height="200" hspace = "100" >  
@@ -105,11 +107,11 @@ Lancer ensuite les scripts [detect3D_Lagrange.py](detect3D_Lagrange.py), [detect
 Ces scripts appliquent une interpolation à ces points suivant la méthode d'interpolation choisie. On récupère alors les coordonnées 3D des points en chaque instant de l'essai, et on affiche leur position finale sur un graphique.
 
 Remarques : 
-- Veiller à garder cohérents le choix de la date, de l'échantillon, et du degré du polynôme entre chaque script.
+- Veiller à garder cohérents la date, le nom l'échantillon, et le degré du polynôme entre chaque script.
 - Il est possible d'ajuster les tailles minimales et maximales des points à détecter dans CoordCam
 - Il est nécessaire d'ajuster manuellement l'appariement dans `CoordCam.py`. Pour cela on se sert de matchTemplate de la bibliothèque [opencv](https://github.com/opencv/opencv) pour obtenir le décalage entre les images de gauche et de droite. Cette méthode n'est pas idéale, car elle ne prend pas en compte le changement de perspective, mais l'erreur est négligeable si l'angle d'orientation des caméras est faible.
 - Dans `CoordCam.py`, on doit rentrer manuellement les coordonnées d'origine de `Template_L` à partir des valeurs indiquées dans **GIMP**
 
 ### Post-traitement et récupération des caractéristiques mécaniques
 
-Lancer les scripts [getdef.py](getdef.py), [getaniso.py](getaniso.py) et [getuzpress.py](getuzpress.py) pour obtenir respectivement les déformations, la caractérisation de l'anisotropie de l'échantillon, et la courbe pression/UzMax.(**Scripts à revoir**)git
+Lancer les scripts [getdef.py](getdef.py), [getaniso.py](getaniso.py) et [getuzpress.py](getuzpress.py) pour obtenir respectivement les déformations, la caractérisation de l'anisotropie de l'échantillon, et la courbe pression/UzMax.(**Scripts à revoir**)

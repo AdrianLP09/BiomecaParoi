@@ -5,12 +5,12 @@ from glob import glob
 from math import *
 from scipy.optimize import least_squares
 
-date = '2025_06_17'
-sample= "SC37_20_P7_16j"
+date = '2025_07_01'
+sample= "SC37_20_P7_30j"
 tricot='None'
 nZ = 10
 l_pform = 5
-spform=332
+spform=555
 
 method_dict = {'Zernike','Lagrange','Soloff'}
 method = input('Choose a method\n')
@@ -177,7 +177,7 @@ for i in range(len(F2)):
   A[:,:,:,-1] = F2[i][:][:]
   A[:,:,:,:2] = F1[i][:][:]
   F.append(A)
-print(len(F),F[-1][-1][-1])
+
   
 #Calcul du tenseur de Green-Lagrange
 Id = []
@@ -240,11 +240,11 @@ for i in range(len(C)):
 
 
 ##PLOTS
-
+P = -1
 #plot 3D
-x = X3d[-1]
-y = Y3d[-1]
-z = Z3d[-1]-Z3d[0]
+x = X3d[P]
+y = Y3d[P]
+z = Z3d[P]-Z3d[0]
 fig = plt.figure(figsize = (16, 9))
 ax = plt.axes(projection ="3d")
 ax.grid(visible = True, color ='grey',
@@ -263,15 +263,21 @@ fig.colorbar(sctt, ax = ax, shrink = 0.5, aspect = 5)
 plt.show()
 
 
-#plots carto tenseur       #F[i][:,:,k,l] i correspond à un certain instant, k=(0 pour x, 1 pour y, 2 pour z), l=(0 pour x, 1 pour y, 2 pour z)
-plt.imshow(F[-1][:,:,0,0]) #ici composante Fxx du tenseur gradient de la déformation
-plt.colorbar()
-plt.show()
+##plots carto tenseur
 
-#plots carto tenseur en virant les bords
-a = np.where((Xmesh-Xmesh[50][50])**2 + (Ymesh-Ymesh[50][50])**2 > ((X0max-X0min)/2)**2)
-for i in range(len(a[0])):
-  F[-1][a[0][i]][a[1][i]][0][0]= 'nan'
-plt.imshow(F[-1][:,:,0,0])
-plt.colorbar()
-plt.show()
+for j in range(3):
+
+#F[i][:,:,k,l] i correspond à un certain instant, k=(0 pour x, 1 pour y, 2 pour z), l=(0 pour x, 1 pour y, 2 pour z)
+
+  plt.imshow(F[P][:,:,j,j])
+  plt.colorbar()
+  plt.show()
+
+  #plots carto tenseur en retirant les bords
+  a = np.where((Xmesh-Xmesh[50][50])**2 + (Ymesh-Ymesh[50][50])**2 > ((X0max-X0min)/2)**2)
+  for i in range(len(a[0])):
+    F[P][a[0][i]][a[1][i]][j][j]= 'nan'
+  plt.imshow(F[P][:,:,j,j])
+  plt.colorbar()
+  plt.savefig(f'./{date}/{sample}/{polform}/'+f'TenseurF{j}{j}_{P}-{len(X3d)}')
+  plt.show()

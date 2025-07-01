@@ -12,6 +12,8 @@ import pathlib
 import cv2
 from math import *
 import math
+import pandas as pd
+import trackpy
 
 
 
@@ -182,64 +184,85 @@ def f(all_pxl, all_pyl, all_pxr, all_pyr):
   return LA_allp
 
 
-def RtoL_transfo(rightpoints, matrix):
-  Rightp = []
-  for i in range(len(rightpoints)):
-    vect = list(rightpoints[i])
-    vect.append(1)
-    vectp = np.dot(matrix, vect)
-    vectp = list(vectp)
-    vectp[0] = vectp[0]/vectp[2]
-    vectp[1] = vectp[1]/vectp[2]
-    del vectp[2]
-    Rightp.append(vectp)
-  return np.array(Rightp)
+#def RtoL_transfo(rightpoints, matrix):
+  #Rightp = []
+  #for i in range(len(rightpoints)):
+    #vect = list(rightpoints[i])
+    #vect.append(1)
+    #vectp = np.dot(matrix, vect)
+    #vectp = list(vectp)
+    #vectp[0] = vectp[0]/vectp[2]
+    #vectp[1] = vectp[1]/vectp[2]
+    #del vectp[2]
+    #Rightp.append(vectp)
+  #return np.array(Rightp)
 
 
-date = '2025_06_20'
-sample= "SC37_20_P7_21j"
+def trshow(tr, first_style='bo', last_style='gs', style='b.'):
+    frames = list(tr.groupby('frame'))
+    nframes = len(frames)
+    for i, (fnum, pts) in enumerate(frames):
+        print(fnum,pts)
+    if i == 0:
+        sty = first_style
+    elif i == nframes - 1:
+        sty = last_style
+    else:
+        sty = style
+    plt.plot(pts.x, pts.y, sty)
+    trackpy.plot_traj(tr, colorby='frame', ax=plt.gca())
+    plt.axis('equal')
+    plt.xlabel('x')
+    plt.ylabel('y')
+
+
+date = '2025_07_01'
+sample= "SC37_20_P7_30j"
 saving_folder=f'./{date}/{sample}/'
 
 
 
 ##reverse the right images, cameras are in mirror
-#Liste_image  = sorted(glob(f'./{date}/{sample}/video_extenso_right/'+"0*"))
+#Liste_image  = sorted(glob(f'./{date}/{sample}/video_extenso_right_00001/'+"0*"))
 #for image in Liste_image:
     #img=cv2.imread(image)
     #img=cv2.rotate(img,cv2.ROTATE_180)
     #cv2.imwrite(image,img)
 
 
-#all_pxl, all_pyl = CoordCam(saving_folder+'video_extenso_left/', 'maskL.tiff',saving_folder+'ROI_left/')
-#np.save(saving_folder + 'all_pxl.npy', all_pxl)
-#np.save(saving_folder + 'all_pyl.npy', all_pyl)
+#all_pxl, all_pyl = CoordCam(saving_folder+'video_extenso_left_00001/', 'maskL.tiff',saving_folder+'ROI_left/')
+#np.save(saving_folder + 'all_pxl_00001.npy', all_pxl)
+#np.save(saving_folder + 'all_pyl_00001.npy', all_pyl)
 
-#all_pxr, all_pyr = CoordCam(saving_folder+'video_extenso_right/', 'maskR.tiff',saving_folder+'ROI_right/')
-#np.save(saving_folder + 'all_pxr.npy', all_pxr)
-#np.save(saving_folder + 'all_pyr.npy', all_pyr)
+#all_pxr, all_pyr = CoordCam(saving_folder+'video_extenso_right_00001/', 'maskR.tiff',saving_folder+'ROI_right/')
+#np.save(saving_folder + 'all_pxr_00001.npy', all_pxr)
+#np.save(saving_folder + 'all_pyr_00001.npy', all_pyr)
 
-all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
-all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
-all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
-all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
+#all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
+#all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
+#all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
+#all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
 
 
 Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)
 N = len(Lp[0][0])
 
-### Appariement des points
-Template = cv2.imread(saving_folder + 'Template_L.tiff') #Template Gimp
-Y_template,X_template = 991,1026 #Constantes à modifier en fonction des coordonnées du Template
+Limage = sorted(glob(saving_folder + 'matrix_calibL'+"0*"))
+Rimage = sorted(glob(saving_folder + 'matrix_calibR'+"0*"))
 
-Img = cv2.imread(saving_folder + 'Template_R.tiff') #Image 0 de la caméra de droite
+
+## Appariement des points
+Template = cv2.imread(saving_folder + 'matrix_calibL/Template_L.tiff') #Template Gimp
+Y_template,X_template = 1001,998 #Constantes à modifier en fonction des coordonnées du Template
+
+Img = cv2.imread(saving_folder + 'matrix_calibR/Template_R.tiff') #Image 0 de la caméra de droite
 
 #On fait correspondre le template sur l'image de droite et on observe le décalage entre les deux images
 result = cv2.matchTemplate(Img, Template, cv2.TM_CCOEFF)
 (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
-(startX,startY) = maxLoc
+(start,startX) = maxLoc
 CoordTemplate = (Y_template, X_template, Y_template + Template.shape[0], X_template + Template.shape[1])
 Diff = (CoordTemplate[0] - maxLoc[0],CoordTemplate[1] - maxLoc[1])
-
 
 xr,yr = [],[]
 for i in range(len(Lp[0][0])):
@@ -258,41 +281,36 @@ for i in range(N):
     yr2.append(yr[i] + Diff[0])
     xr2.append(xr[i] + Diff[1])
 
-for i in range(N):
 
 fig,ax=plt.subplots()
 ax.plot(xr2,yr2,'bo'),ax.plot(xl,yl,'ro')
 plt.show()
 
-Matched_Left = Lp[0][0]
-Matched_Right = np.array([(yr2[i],xr2[i]) for i in range(N)])
-row_ind = np.array([k for k in range(N)])
-col_ind = np.zeros(N,dtype = int)
-for i in range(N): # On fait l'appariement en regardant les points les plus proches après compensation du delta
-    m = np.linalg.norm(Matched_Left[i]-Matched_Right[0])
-    Id = 0
-    for j in range(N):
-        if np.linalg.norm(Matched_Left[i] - Matched_Right[j]) < m :
-            #if np.all(np.not_equal(col_ind,j)):
-            m = np.linalg.norm(Matched_Left[i] - Matched_Right[j])
-            Id = j
-        #else:
-            #if np.linalg.norm(Matched_Left[i]-Matched_Right[j])< np.linalg.norm(Matched_Left[i]-Matched_Right[col_ind==j]):
-                #m = np.linalg.norm(Matched_Left[i]-Matched_Right[j])
-                #Id = j
-        col_ind[i] = Id
-col_ind = np.array(col_ind)
-print(col_ind,len(col_ind))
-#row_ind, col_ind = linear_sum_assignment(distance_matrix)
-matched_gauche = Matched_Left[row_ind]
-matched_droite = Matched_Right[col_ind]
 for i in range(N):
-    print(matched_gauche[i][1] - matched_droite[i][1])
+  all_pxr[0][i]+=Diff[1]
+  all_pyr[0][i]+=Diff[0]
 
-# Appariement
+L = pd.DataFrame(dict(x=all_pxl[0],y=all_pyl[0],frame=0))
+R = pd.DataFrame(dict(x=all_pxr[0],y=all_pyr[0],frame=1))
+
+tr=pd.concat(trackpy.link_df_iter((L,R),30))
+Link = list(trackpy.link_df_iter((L,R),30))
+R_ind = np.array(Link[1].particle)
+L_ind = np.array([k for k in range(N)])
+Ind = np.where(L_ind != R_ind)[0]
+print(Link)
+#trshow(tr)
+#plt.show()
+
+#Appariement
 for i in range(len(Lp)):
     Rightbuff = Lp[i][1].copy()
-    for j in range(len(col_ind)):
-        Lp[i][1][row_ind[j]] = Rightbuff[col_ind[j]]
+    for j in Ind:
+        #print(j)
+        Lp[i][1][j] = Rightbuff[R_ind[j]]
 
-np.save(saving_folder + 'Lp.npy',Lp)
+
+
+trshow(tr)
+plt.show()
+np.save(saving_folder + 'Lp_00001.npy',Lp)

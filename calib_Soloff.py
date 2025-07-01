@@ -8,16 +8,17 @@ from Pycaso import pycaso as pcs
 from Pycaso import solve_library as solvel
 
 
-def calib_Zernike (nZ : int,
-                   date : str,
-                   reverse : bool = False) :
+def calib_Soloff (spform : int,
+                  date : str,
+                  calibration_dict : dict,
+                  reverse : bool = False) :
 
 
-  """ Calibration by Zernike method and 3D plotting of the calibration
+  """ Calibration by Soloff method and 3D plotting of the calibration
 
   Args :
-    nZ : int
-        Polynomial degree of the Zernike polynome
+    spform : int
+        Polynomial degree of the Soloff polynome
     date : str
         Date of the test
     calibration_dict : dict
@@ -27,7 +28,7 @@ def calib_Zernike (nZ : int,
 
   """
 
-  saving_folder = f'./{date}/results_calib/nZ_{nZ}/'
+  saving_folder = f'./{date}/results_calib/Spform_{spform}/'
 
   #Dictionnary ot the calibration, with the calibration folders, and the ChAruCo dimensions
   calibration_dict = {
@@ -56,22 +57,21 @@ def calib_Zernike (nZ : int,
   print('')
   print(date)
   print('#####       ')
-  print('Zernike method - Start calibration')
+  print('Soloff method - Start calibration')
   print('#####       ')
 
-  #calibration : Zernike constants, magnification
-  A_Zernike, Magnification = pcs.Zernike_calibration(z_list = x3_list,
-                                                     Zernike_pform = nZ,
-                                                     plotting = False,
-                                                     iterations = 9,
-                                                     **calibration_dict)
+  #calibration : Soloff constants, magnification
+  S_constants0, S_constants, Mag = pcs.Soloff_calibration(z_list = x3_list,
+                                                          Soloff_pform = spform,
+                                                          iterations = 8,
+                                                          **calibration_dict)
 
-  coord = np.load(saving_folder+'3D_coordinates/3D_coordinates_Zernike.npy')
+  coord=np.load(saving_folder+'3D_coordinates/3D_coordinates_Soloff.npy')
 
   #display the coordinates in the 3D space
-  xc = []
-  yc = []
-  zc = []
+  xc=[]
+  yc=[]
+  zc=[]
   for i in range(len(coord[0])):
     xc.append(coord[0][i])
     yc.append(coord[1][i])
@@ -81,15 +81,18 @@ def calib_Zernike (nZ : int,
   ax.set_xlabel('X')
   ax.set_ylabel('Y')
   ax.set_zlabel('Z')
-  plt.savefig(f'./{date}/results_calib/nZ_{nZ}/3D_coordinates/'+'Coord3D')
+  plt.savefig(f'./{date}/results_calib/Spform_{spform}/3D_coordinates/'+'Coord3D')
   plt.show()
 
-  np.save(saving_folder+'A_Zernike.npy', A_Zernike)
+
+  np.save(saving_folder+'S_constants0.npy', S_constants0)
+  np.save(saving_folder+'S_constants.npy', S_constants)
 
 
 if __name__ == "__main__":
 
     date = "2025_07_01"
-    nZ = 12 #polynomial degree
+    spform = 443  #polynomial degree
 
-    calib_Zernike(nZ, date, False)
+
+    calib_Soloff(spform, date, False)
