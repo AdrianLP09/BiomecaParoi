@@ -3,3 +3,6 @@ opencv-contrib : 4.7.0
 scipy : 1.15.2
 scikit-image : 0.25.2
 pymodbus: 3.9.0
+trackpy: 0.6.4
+pandas: 2.2.3
+crappy: 2.0.7

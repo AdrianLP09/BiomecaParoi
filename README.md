@@ -106,8 +106,8 @@ Ces scripts appliquent une interpolation à ces points suivant la méthode d'int
 Remarques : 
 - Veiller à garder cohérents la date, le nom l'échantillon, et le degré du polynôme entre chaque script.
 - Il est possible d'ajuster les tailles minimales et maximales des points à détecter dans CoordCam
-- Il est nécessaire d'ajuster manuellement l'appariement dans `CoordCam.py`. Pour cela on se sert de matchTemplate de la bibliothèque [opencv](https://github.com/opencv/opencv) pour obtenir le décalage entre les images de gauche et de droite. On utilise ensuite le *linking* via [trackpy](https://github.com/soft-matter/trackpy) pour récupérer la correspondance entre les points des déux caméras. Cette méthode n'est pas idéale, car elle ne prend pas en compte le changement de perspective, mais l'erreur est négligeable si l'angle d'orientation des caméras est faible.
-- Dans `CoordCam.py`, on doit rentrer manuellement les coordonnées d'origine de `Template_L` à partir des valeurs indiquées dans **GIMP**. Il peut également être nécessaire de modifier le paramètre `search_range` de la fonction `link_df_iter` trackpy.
+- Il est nécessaire d'ajuster manuellement l'appariement dans [CoordCam.py](CoordCam.py). Pour cela on se sert de matchTemplate de la bibliothèque [opencv](https://github.com/opencv/opencv) pour obtenir le décalage entre les images de gauche et de droite. On utilise ensuite le *linking* via [trackpy](https://github.com/soft-matter/trackpy) pour récupérer la correspondance entre les points des déux caméras. Cette méthode n'est pas idéale, car elle ne prend pas en compte le changement de perspective, mais l'erreur est négligeable si l'angle d'orientation des caméras est faible.
+- Dans [CoordCam.py](CoordCam.py), on doit rentrer manuellement les coordonnées d'origine de `Template_L` à partir des valeurs indiquées dans **GIMP**, et les modifier si beosin. Il peut également être nécessaire de modifier le paramètre `search_range` de la fonction `link_df_iter` trackpy.
 
 ### Post-traitement et récupération des caractéristiques mécaniques
 

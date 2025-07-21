@@ -39,7 +39,7 @@ def detect3D_Soloff (spform : int,
             Z Coordinates of the points in the 3d space, for each step of the test
       """
 
-      data_folder = f'./{date}/results_calib/Spform_{spform}/'
+      data_folder = f'./results_calib/Spform_{spform}/'
       saving_folder = f'./{date}/{sample}/'
 
       if os.path.exists(saving_folder+f'Spform_{spform}/') :
@@ -54,7 +54,7 @@ def detect3D_Soloff (spform : int,
       Lx3d = []
       Ly3d = []
       Lz3d = []
-      Lp = np.load(saving_folder + 'Lp_00001.npy',allow_pickle=True)
+      Lp = np.load(saving_folder + 'Lp.npy',allow_pickle=True)
       for i in range(len(Lp)):
         Left, Right = Lp[i]
         xSoloff_solution = pcs.Soloff_identification (Left,
@@ -70,7 +70,10 @@ def detect3D_Soloff (spform : int,
 
       x = Lx3d[P_graph]
       y = Ly3d[P_graph]
-      z = Lz3d[P_graph]#-Lz3d[0]
+      if P_graph != 0:
+        z = Lz3d[P_graph]-Lz3d[0]
+      else:
+        z = Lz3d[P_graph]
       fig = plt.figure(figsize=(16,9))
       ax = plt.axes(projection='3d')
       ax.grid(visible=True,
@@ -82,11 +85,11 @@ def detect3D_Soloff (spform : int,
       ax.set_ylabel('Y')
       ax.set_zlabel('Z')
       #ax.set_zlim(min(Lz3d[0]),max(Lz3d[-1]))
-      my_cmap = plt.get_cmap('hsv')
+      my_cmap = plt.get_cmap('viridis')
       sctt = ax.scatter3D(x,y,z, alpha=0.8, c=z, cmap=my_cmap)
       plt.title('Results')
       fig.colorbar(sctt, ax=ax, shrink=0.5, aspect=5)
-      plt.savefig(saving_folder + f'Spform_{spform}/'+f'Déplacement_{P_graph}-{len(Lx3d)}')
+      #plt.savefig(saving_folder + f'Spform_{spform}/'+f'Déplacement_{P_graph}-{len(Lx3d)}')
       plt.show()
 
       np.savetxt(saving_folder + f'Spform_{spform}/X3d.txt', Lx3d)
@@ -98,10 +101,10 @@ def detect3D_Soloff (spform : int,
 
 if __name__ == '__main__' :  
 
-  date = '2025_07_01'
-  sample = "SC37_20_P7_30j"
+  date = '2025_07_21'
+  sample = 'Pro_Grip'
   spform = 555
 
-  Lx3d, Ly3d, Lz3d = detect3D_Soloff(spform, date, sample, 0)
+  Lx3d, Ly3d, Lz3d = detect3D_Soloff(spform, date, sample, -1)
 
 

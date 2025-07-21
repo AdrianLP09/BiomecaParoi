@@ -9,8 +9,8 @@ import pathlib
 
 if __name__ == "__main__":
 
-  date = "2025_07_01"
-  sample= "SC37_20_P7_30j"
+  date = "2025_07_21"
+  sample= "Pro_Grip"
   saving_folder=f'./{date}/{sample}/'
   if os.path.exists(saving_folder) :
     ()

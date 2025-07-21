@@ -8,9 +8,8 @@ from Pycaso import pycaso as pcs
 from Pycaso import solve_library as solvel
 
 
-def calib_Lagrange (l_pform : int = 4,
+def calib_Lagrange (l_pform : int,
                     date : str,
-                    calibration_dict : dict,
                     reverse : bool = False) :
 
 
@@ -21,76 +20,77 @@ def calib_Lagrange (l_pform : int = 4,
           Polynomial degree of the Lagrange polynome
       date : str
           Date of the test
-      calibration_dict : dict
-          Dictionnary ot the calibration, with the calibration folders, and the ChAruCo dimensions
       reverse : bool, optional
           Indicates if the right camera images should be reversed. 'True' for the first calibration only
 
     """
 
-  saving_folder = f'./{date}/results_calib/Lpform_{l_pform}/'
+    saving_folder = f'./{date}/results_calib/Lpform_{l_pform}/'
 
-  if reverse :
-    #reverse the right images, cameras are in mirror
-    Liste_image  = sorted(glob(f'./{date}/r/'+"0*"))
-    for image in Liste_image:
-      img = cv2.imread(image)
-      img = cv2.rotate(img,cv2.ROTATE_180)
-      cv2.imwrite(image,img)
+    #Dictionnary ot the calibration, with the calibration folders, and the ChAruCo dimensions
+    calibration_dict = {
+    'cam1_folder' : f'./{date}/l',
+    'cam2_folder' : f'./{date}/r',
+    'name' : 'calibration',
+    'saving_folder' : saving_folder,
+    'ncx' : 12,
+    'ncy' : 12,
+    'sqr' : 7.5}  #in mm
 
-  # Create the list of z plans
-  x3_list = []
-  for i in range(21) :
-    x3_list.append(120 -5*i)
-  x3_list = np.array(x3_list)
+    if reverse :
+      #reverse the right images, cameras are in mirror
+      Liste_image  = sorted(glob(f'./{date}/r/'+"0*"))
+      for image in Liste_image:
+        img = cv2.imread(image)
+        img = cv2.rotate(img,cv2.ROTATE_180)
+        cv2.imwrite(image,img)
 
-  print('')
-  print(date)
-  print('#####       ')
-  print('Lagrange method - Start calibration')
-  print('#####       ')
+    # Create the list of z plans
+    x3_list = []
+    for i in range(21) :
+      x3_list.append(120 -5*i)
+    x3_list = np.array(x3_list)
 
-  #calibration : Lagrange constants, magnification
-  L_constants, Mag = pcs.Lagrange_calibration(z_list = x3_list,
-                                              Lagrange_pform = l_pform,
-                                              plotting = False,
-                                              iterations = 10,
-                                              **calibration_dict)
+    print('')
+    print(date)
+    print('#####       ')
+    print('Lagrange method - Start calibration')
+    print('#####       ')
 
-  coord=np.load(saving_folder+'3D_coordinates/3D_coordinates_Lagrange.npy')
+    #calibration : Lagrange constants, magnification
+    L_constants, Mag = pcs.Lagrange_calibration(z_list = x3_list,
+                                                Lagrange_pform = l_pform,
+                                                plotting = False,
+                                                iterations = 10,
+                                                **calibration_dict)
 
-  #display the coordinates in the 3D space
-  xc=[]
-  yc=[]
-  zc=[]
-  for i in range(len(coord[0])):
-    xc.append(coord[0][i])
-    yc.append(coord[1][i])
-    zc.append(coord[2][i])
-  ax = plt.figure().add_subplot(111,projection='3d')
-  ax.scatter(xc,yc,zc)
-  ax.set_xlabel('X')
-  ax.set_ylabel('Y')
-  ax.set_zlabel('Z')
-  plt.savefig(f'./{date}/results_calib/Lpform_{l_pform}/3D_coordinates/'+'Coord3D')
-  plt.show()
+    coord=np.load(saving_folder+'3D_coordinates/3D_coordinates_Lagrange.npy')
 
-  np.save(saving_folder+'L_constants.npy', L_constants)
+    #display the coordinates in the 3D space
+    xc=[]
+    yc=[]
+    zc=[]
+    for i in range(len(coord[0])):
+      xc.append(coord[0][i])
+      yc.append(coord[1][i])
+      zc.append(coord[2][i])
+    ax = plt.figure().add_subplot(111,projection='3d')
+    ax.scatter(xc,yc,zc)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    plt.savefig(f'./{date}/results_calib/Lpform_{l_pform}/3D_coordinates/'+'Coord3D')
+    plt.show()
+
+    np.save(saving_folder+'L_constants.npy', L_constants)
 
 
 if __name__ == "__main__":
 
-    date = "2025_06_16"
+    date = "2025_06_18"
     l_pform = 4   #polynomial degree
 
     # Define the inputs
-    calibration_dict = {
-      'cam1_folder' : f'./{date}/l',
-      'cam2_folder' : f'./{date}/r',
-      'name' : 'calibration',
-      'saving_folder' : saving_folder,
-      'ncx' : 12,
-      'ncy' : 12,
-      'sqr' : 7.5}  #in mm
 
-    calib_Lagrange(l_pform, date, calibration_dict, False)
+
+    calib_Lagrange(l_pform, date, False)

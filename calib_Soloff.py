@@ -10,7 +10,6 @@ from Pycaso import solve_library as solvel
 
 def calib_Soloff (spform : int,
                   date : str,
-                  calibration_dict : dict,
                   reverse : bool = False) :
 
 
@@ -21,8 +20,6 @@ def calib_Soloff (spform : int,
         Polynomial degree of the Soloff polynome
     date : str
         Date of the test
-    calibration_dict : dict
-        Dictionnary ot the calibration, with the calibration folders, and the ChAruCo dimensions
     reverse : bool, optional
         Indicates if the right camera images should be reversed. 'True' for the first calibration only
 
@@ -43,6 +40,7 @@ def calib_Soloff (spform : int,
   if reverse :
     #reverse the right images, cameras are in mirror
     Liste_image  = sorted(glob(f'./{date}/r/'+"0*"))
+    print(Liste_image)
     for image in Liste_image:
       img = cv2.imread(image)
       img = cv2.rotate(img,cv2.ROTATE_180)
@@ -91,8 +89,8 @@ def calib_Soloff (spform : int,
 
 if __name__ == "__main__":
 
-    date = "2025_07_01"
-    spform = 443  #polynomial degree
+    date = "2025_07_11"
+    spform = 555  #polynomial degree
 
 
-    calib_Soloff(spform, date, False)
+    calib_Soloff(spform, date, True)

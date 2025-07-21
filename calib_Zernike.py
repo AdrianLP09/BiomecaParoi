@@ -50,7 +50,7 @@ def calib_Zernike (nZ : int,
   # Create the list of z plans
   x3_list = []
   for i in range(21) :
-    x3_list.append(120 -5*i)
+    x3_list.append(20 +5*i)
   x3_list = np.array(x3_list)
 
   print('')
@@ -89,7 +89,7 @@ def calib_Zernike (nZ : int,
 
 if __name__ == "__main__":
 
-    date = "2025_07_01"
-    nZ = 12 #polynomial degree
+    date = "2025_06_18"
+    nZ = 11 #polynomial degree
 
     calib_Zernike(nZ, date, False)

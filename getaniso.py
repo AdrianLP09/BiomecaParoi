@@ -4,8 +4,8 @@ from scipy.interpolate import Rbf
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
 
-date = '2025_07_01'
-sample = "SC37_20_P7_30j"
+date = '2025_07_07'
+sample= "SC37_20_P7_30j"
 tricot ='None'
 nZ = 10
 l_pform = 4
@@ -74,7 +74,7 @@ if tricot == 'P1':
 if tricot == 'P7R':
   ip = 0
 
-ip = 79
+ip = 259
 X3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/X3d.txt', delimiter=' ')[:ip+1]
 Y3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/Y3d.txt', delimiter=' ')[:ip+1]
 Z3d = np.loadtxt(fname=f'./{date}/{sample}/{polform}/Z3d.txt', delimiter=' ')[:ip+1]
@@ -149,7 +149,7 @@ if method != 'Soloff' :
   Upz=-Upz
 
 
-PER = [i for i in np.arange(0.25, 0.81, 0.01)]
+PER = [i for i in np.arange(0.4, 0.81, 0.01)]
 Lr = []
 PER2 = []
 Lstd = []
@@ -195,7 +195,7 @@ theta0 = [1, 1]
 ax = plt.axes()
 ax.set_xlabel('Z')
 ax.set_ylabel('b/a')
-inter_PER = np.linspace(0.25, 0.8, 100)
+inter_PER = np.linspace(0.4, 0.8, 100)
 
 
 #if tricot == '4DFIXNR':

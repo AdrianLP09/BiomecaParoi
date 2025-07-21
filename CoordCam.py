@@ -96,7 +96,7 @@ def CoordCam(path=str, mask=str, savefile=str):
         ax.add_patch(rect)
     all_px=np.vstack([barx]) # je cree des tableaux dans lequel je stocke les positions en X et en Y
     all_py=np.vstack([bary])
-    #plt.show()
+    ##plt.show()
     ##### Second step - iteration : ROI localization on the following images
     for j in np.arange(1, len(Liste_image), 1):
         print(j)
@@ -105,7 +105,7 @@ def CoordCam(path=str, mask=str, savefile=str):
         else:
             image = plt.imread(Liste_image[j])
         img = invert(difference_of_gaussians(image, 5,6))
-        #img = invert(image)
+        ##img = invert(image)
         fig, ax = plt.subplots()
         ax.imshow(img, cmap='gray')
         for i in range(len(areas)):
@@ -161,14 +161,11 @@ def CoordCam(path=str, mask=str, savefile=str):
                 ax.axis('off')
                 ax.plot(ppy,ppx,'ro', markersize=2)
         #plt.show()
-        #plt.savefig(savefile + 'img_%06d.png'%j,dpi=150)
+        plt.savefig(savefile + 'img_%06d.png'%j,dpi=150)
         plt.close()
         all_px = np.vstack([all_px, barx])
         ## add updated X coord of all ZOI to previous ones
         all_py = np.vstack([all_py, bary])
-        ## add updated Y coord of all updated ZOI to previous ones
-        #  np.savetxt('./2023_08_29/40d_cd/SC37_40_P7NR/px_right.txt', all_px) # save X
-        #  np.savetxt('./2023_08_29/40d_cd/SC37_40_P7NR/py_right.txt', all_py) # save Y
     return all_px, all_py
 
 def f(all_pxl, all_pyl, all_pxr, all_pyr):
@@ -183,134 +180,121 @@ def f(all_pxl, all_pyl, all_pxr, all_pyr):
     LA_allp.append(A_allp)
   return LA_allp
 
+##Affichage du résultat de trackpy##
 
-#def RtoL_transfo(rightpoints, matrix):
-  #Rightp = []
-  #for i in range(len(rightpoints)):
-    #vect = list(rightpoints[i])
-    #vect.append(1)
-    #vectp = np.dot(matrix, vect)
-    #vectp = list(vectp)
-    #vectp[0] = vectp[0]/vectp[2]
-    #vectp[1] = vectp[1]/vectp[2]
-    #del vectp[2]
-    #Rightp.append(vectp)
-  #return np.array(Rightp)
-
-
-def trshow(tr, first_style='bo', last_style='gs', style='b.'):
+def trshow(tr, first_style='bo', last_style='rx', style='b.'):
     frames = list(tr.groupby('frame'))
     nframes = len(frames)
     for i, (fnum, pts) in enumerate(frames):
-        print(fnum,pts)
-    if i == 0:
-        sty = first_style
-    elif i == nframes - 1:
-        sty = last_style
-    else:
-        sty = style
-    plt.plot(pts.x, pts.y, sty)
+        if i == 0:
+            sty = first_style
+        elif i == nframes - 1:
+            sty = last_style
+        else:
+            sty = style
+        plt.plot(pts.x, pts.y, sty)
     trackpy.plot_traj(tr, colorby='frame', ax=plt.gca())
     plt.axis('equal')
     plt.xlabel('x')
     plt.ylabel('y')
 
 
-date = '2025_07_01'
-sample= "SC37_20_P7_30j"
+##Identification des points
+date = "2025_07_21"
+sample= "Pro_Grip"
 saving_folder=f'./{date}/{sample}/'
 
 
 
-##reverse the right images, cameras are in mirror
-#Liste_image  = sorted(glob(f'./{date}/{sample}/video_extenso_right_00001/'+"0*"))
+#on renverse les images de la caméra de droite car les caméras sont en miroir
+#Liste_image  = sorted(glob(f'./{date}/{sample}/video_extenso_right/'+"0*"))
 #for image in Liste_image:
     #img=cv2.imread(image)
     #img=cv2.rotate(img,cv2.ROTATE_180)
     #cv2.imwrite(image,img)
 
 
-#all_pxl, all_pyl = CoordCam(saving_folder+'video_extenso_left_00001/', 'maskL.tiff',saving_folder+'ROI_left/')
-#np.save(saving_folder + 'all_pxl_00001.npy', all_pxl)
-#np.save(saving_folder + 'all_pyl_00001.npy', all_pyl)
+all_pxl, all_pyl = CoordCam(saving_folder+'video_extenso_left/', 'maskL.tiff',saving_folder+'ROI_left/')
+np.save(saving_folder + 'all_pxl.npy', all_pxl)
+np.save(saving_folder + 'all_pyl.npy', all_pyl)
 
-#all_pxr, all_pyr = CoordCam(saving_folder+'video_extenso_right_00001/', 'maskR.tiff',saving_folder+'ROI_right/')
-#np.save(saving_folder + 'all_pxr_00001.npy', all_pxr)
-#np.save(saving_folder + 'all_pyr_00001.npy', all_pyr)
+all_pxr, all_pyr = CoordCam(saving_folder+'video_extenso_right/', 'maskR.tiff',saving_folder+'ROI_right/')
+np.save(saving_folder + 'all_pxr.npy', all_pxr)
+np.save(saving_folder + 'all_pyr.npy', all_pyr)
 
-#all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
-#all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
-#all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
-#all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
-
+all_pyl = np.load(saving_folder + 'all_pyl.npy', allow_pickle=True)
+all_pxl = np.load(saving_folder + 'all_pxl.npy', allow_pickle=True)
+all_pyr = np.load(saving_folder + 'all_pyr.npy', allow_pickle=True)
+all_pxr = np.load(saving_folder + 'all_pxr.npy', allow_pickle=True)
+print(len(all_pyl))
 
 Lp = f(all_pxl, all_pyl, all_pxr, all_pyr)
-N = len(Lp[0][0])
+N=len(Lp[0][0])
 
-Limage = sorted(glob(saving_folder + 'matrix_calibL'+"0*"))
-Rimage = sorted(glob(saving_folder + 'matrix_calibR'+"0*"))
 
 
 ## Appariement des points
 Template = cv2.imread(saving_folder + 'matrix_calibL/Template_L.tiff') #Template Gimp
-Y_template,X_template = 1001,998 #Constantes à modifier en fonction des coordonnées du Template
+Y_template,X_template = 991,1113 #Constantes à modifier en fonction des coordonnées du Template
 
 Img = cv2.imread(saving_folder + 'matrix_calibR/Template_R.tiff') #Image 0 de la caméra de droite
 
-#On fait correspondre le template sur l'image de droite et on observe le décalage entre les deux images
+#On fait correspondre le template sur l'image de droite et on observe le décalage entre les deux images pour faciliter l'appariement
 result = cv2.matchTemplate(Img, Template, cv2.TM_CCOEFF)
 (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
-(start,startX) = maxLoc
+(startY,startX) = maxLoc
 CoordTemplate = (Y_template, X_template, Y_template + Template.shape[0], X_template + Template.shape[1])
-Diff = (CoordTemplate[0] - maxLoc[0],CoordTemplate[1] - maxLoc[1])
-
-xr,yr = [],[]
-for i in range(len(Lp[0][0])):
-    xr.append(Lp[0][1][i][1])
-    yr.append(Lp[0][1][i][0])
-
-xl,yl=[],[]
-for i in range(len(Lp[0][0])):
-    xl.append(Lp[0][0][i][1])
-    yl.append(Lp[0][0][i][0])
+Diff = (CoordTemplate[0] - maxLoc[0],CoordTemplate[1] - maxLoc[1]) #récupération du delta entre caméra de gauche et de droite
 
 
-# On applique le delta aux coordonnées de droite
-xr2,yr2 = [],[]
-for i in range(N):
-    yr2.append(yr[i] + Diff[0])
-    xr2.append(xr[i] + Diff[1])
-
-
-fig,ax=plt.subplots()
-ax.plot(xr2,yr2,'bo'),ax.plot(xl,yl,'ro')
-plt.show()
-
+#On applique le delta aux coordonnées de droite
 for i in range(N):
   all_pxr[0][i]+=Diff[1]
   all_pyr[0][i]+=Diff[0]
-
-L = pd.DataFrame(dict(x=all_pxl[0],y=all_pyl[0],frame=0))
-R = pd.DataFrame(dict(x=all_pxr[0],y=all_pyr[0],frame=1))
-
-tr=pd.concat(trackpy.link_df_iter((L,R),30))
-Link = list(trackpy.link_df_iter((L,R),30))
-R_ind = np.array(Link[1].particle)
-L_ind = np.array([k for k in range(N)])
-Ind = np.where(L_ind != R_ind)[0]
-print(Link)
-#trshow(tr)
-#plt.show()
-
-#Appariement
-for i in range(len(Lp)):
-    Rightbuff = Lp[i][1].copy()
-    for j in Ind:
-        #print(j)
-        Lp[i][1][j] = Rightbuff[R_ind[j]]
+print(Diff)
 
 
+# Affichage des coordonnées après décalage
+xr,yr = [],[]
+for i in range(N):
+    xr.append(Lp[0][1][i][1])
+    yr.append(Lp[0][1][i][0])
+xl,yl=[],[]
+for i in range(N):
+    xl.append(Lp[0][0][i][1])
+    yl.append(Lp[0][0][i][0])
+xr2,yr2 = [],[]
+for i in range(N):
+    xr2.append(xr[i]+Diff[1])
+    yr2.append(yr[i]+Diff[0])
 
+fig,ax=plt.subplots()
+ax.plot(xr2,yr2,'ro'),ax.plot(xl,yl,'bo')
+plt.show()
+
+
+
+# On lie les images de droite et gauche par trackpy
+L = pd.DataFrame(dict(x=all_pxl[0],y=all_pyl[0],frame=0,orig_index=np.arange(N)))
+R = pd.DataFrame(dict(x=all_pxr[0],y=all_pyr[0],frame=1,orig_index=np.arange(N)))
+
+# Affichage de l'appariement
+tr = pd.concat(trackpy.link_df_iter((L,R),60, adaptive_stop=20, adaptive_step=0.95))
 trshow(tr)
 plt.show()
-np.save(saving_folder + 'Lp_00001.npy',Lp)
+
+tr_l = tr[tr.frame==0].copy()
+tr_r = tr[tr.frame==1].copy()
+
+merged = pd.merge(tr_l, tr_r, on='particle', suffixes=('_l','_r'))
+New_ind = merged.sort_values('orig_index_l')['orig_index_r'].to_list() #Nouvel indexation des coordonnées des points
+
+
+# Réindexaion des coordonnées 3D dans la matrice d'origine
+for i in range(len(Lp)):
+    Rightbuff = Lp[i][1].copy()
+    reordered = [Rightbuff[New_ind[j]] for j in range(N)]
+    Lp[i] = (Lp[i][0], reordered)
+
+
+np.save(saving_folder + 'Lp2.npy',Lp)

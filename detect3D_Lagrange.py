@@ -13,7 +13,6 @@ from Pycaso import pycaso as pcs
 def detect3D_Lagrange (l_pform : int,
                        date : str,
                        sample : str,
-                       calibration_dict : dict
                        P_graph : int = 0) -> (list,
                                               list,
                                               list):
@@ -28,7 +27,7 @@ def detect3D_Lagrange (l_pform : int,
            Date of the test
         sample : str
            Type of sample (silicone + mesh + resorption)
-        P_graph : int,optional
+        P_graph : int, optional
             State of the sample during the test which will be plotted
 
     Returns:
@@ -59,19 +58,21 @@ def detect3D_Lagrange (l_pform : int,
     for i in range(len(Lp)):
         Left,Right= Lp[i]
         L_solution = pcs.Lagrange_identification (Left,
-                                                  Right,
-                                                  L_constants,
-                                                  l_pform)
+                                                Right,
+                                                L_constants,
+                                                l_pform)
 
         x,y,z = L_solution
         Lx3d.append(x)
         Ly3d.append(y)
         Lz3d.append(z)
 
-
     x = Lx3d[P_graph]
     y = Ly3d[P_graph]
-    z = Lz3d[P_graph]-Lz3d[0]
+    #if P_graph != 0:
+        #z = Lz3d[P_graph]-Lz3d[0]
+    #else:
+    z = Lz3d[P_graph]
     fig = plt.figure(figsize=(16,9))
     ax = plt.axes(projection='3d')
     ax.grid(visible=True,
@@ -82,13 +83,15 @@ def detect3D_Lagrange (l_pform : int,
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
-    ax.set_zlim(min(Lz3d[0]-Lz3d[0]), max(Lz3d[0]-Lz3d[P_graph]))
+    ax.set_zlim((60,100))
+    ax.set_xlim((20,100))
+    ax.set_ylim((20,100))
     #print(min(Lz3d[0]),max(Lz3d[-1]))
-    my_cmap = plt.get_cmap('hsv')
+    my_cmap = plt.get_cmap('viridis')
     sctt = ax.scatter3D(x,y,z, alpha=0.8, c=z, cmap=my_cmap)
     plt.title('Results')
     fig.colorbar(sctt, ax=ax, shrink=0.5, aspect=5)
-    plt.savefig(saving_folder + f'Lpform_{l_pform}/'+f'Figure_1_{P_graph}-{len(Lx3d)}')
+    plt.savefig(saving_folder + f'Lpform_{l_pform}/'+f'Déplacement_{P_graph}-{len(Lx3d)}')
     plt.show()
     np.savetxt(saving_folder+f'Lpform_{l_pform}/X3d.txt', Lx3d)
     np.savetxt(saving_folder+f'Lpform_{l_pform}/Y3d.txt', Ly3d)
@@ -99,8 +102,8 @@ def detect3D_Lagrange (l_pform : int,
 
 if __name__ == '__main__' :
 
-    date = '2025_06_16'
-    sample = "SC37_40_P7_16j"
+    date = '2025_06_18'
+    sample = "SC37_20_P7_21j"
     l_pform =4
 
     Lx3d, Ly3d, Lz3d = detect3D_Lagrange(l_pform, date, sample, 0)

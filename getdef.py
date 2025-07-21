@@ -5,7 +5,7 @@ from glob import glob
 from math import *
 from scipy.optimize import least_squares
 
-date = '2025_07_01'
+date = '2025_07_07'
 sample= "SC37_20_P7_30j"
 tricot='None'
 nZ = 10
@@ -13,9 +13,9 @@ l_pform = 5
 spform=555
 
 method_dict = {'Zernike','Lagrange','Soloff'}
-method = input('Choose a method\n')
+method = input('Choisir une methode\n')
 if not method in method_dict:
-   raise AssertionError('Wrong method, choose among ' + str(method_dict))
+   raise AssertionError('Erreur, choisir parmi' + str(method_dict))
 
 if method == 'Lagrange':
    polform = f'Lpform_{l_pform}'
@@ -240,7 +240,7 @@ for i in range(len(C)):
 
 
 ##PLOTS
-P = -1
+P = 133
 #plot 3D
 x = X3d[P]
 y = Y3d[P]

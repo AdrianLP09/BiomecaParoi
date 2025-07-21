@@ -306,8 +306,8 @@ if pymodbus.__version__=='3.9.0':
 
 if __name__ == "__main__":
 
-    date = "2025_07_01"
-    sample= "SC37_20_P7_30j"
+    date = "2025_07_21"
+    sample= "Pro_Grip"
 
     saving_folder=f'./{date}/{sample}/'
 
@@ -370,7 +370,7 @@ if __name__ == "__main__":
 
     gen_flow = crappy.blocks.Generator([{'type': 'Constant',
                                         'value': 0.1,
-                                        'condition': 'press > 1346'}], cmd_label='cmd') #pressmax = pression débitmètre + 336 ("Jumping") ou 188("Standing Cough")
+                                        'condition': 'press > 1500'}], cmd_label='cmd') #pressmax = pression débitmètre + 336 ("Jumping") ou 188("Standing Cough")
 
     rec_ali = crappy.blocks.Recorder(file_name=f'./{date}/{sample}/data_ali.txt')
 

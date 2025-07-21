@@ -21,8 +21,8 @@ class Printer(crappy.actuator.Actuator):
     self.ser.write(b'M999\r\n')
     self.abscoord()
     self.backtozero()
-    self.set_position(pos=125, speed=150)
-    while self.get_position() != 125:
+    self.set_position(pos=70, speed=150)
+    while self.get_position() != 70:
       time.sleep(0.01)
 
   def set_position(self, pos: float, speed=100) -> None:

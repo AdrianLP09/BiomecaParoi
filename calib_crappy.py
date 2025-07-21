@@ -11,30 +11,30 @@ import numpy as np
 
 
 if __name__ == '__main__':
-  date = "2025_07_01"
+  date = "2025_07_17"
 
 
 
   cam_R = crappy.blocks.Camera(camera="XiAPI",
                               config=True,
                               save_images=True,
-                              save_folder=f"./{date}/r",
+                              save_folder=f"./{date}/Mvt_Rigide/video_extenso_right/",
                               timeout=100000,
                               img_shape=(2048,2048),
                               img_dtype='uint8',
                               **{"serial_number": "14482450",
-                                  "exposure": 36245,
+                                  "exposure": 41389,
                                   "trigger": "Hdw after config"})
 
   cam_L = crappy.blocks.Camera(camera="XiAPI",
                               config=True,
                               save_images=True,
-                              save_folder=f"./{date}/l",
+                              save_folder=f"./{date}/Mvt_Rigide/video_extenso_left/",
                               timeout=100000,
                               img_shape=(2048,2048),
                               img_dtype='uint8',
                               **{"serial_number": "32482550",
-                                  "exposure": 24339,
+                                  "exposure": 28757,
                                   "trigger": "Hdw after config"})
 
 
@@ -55,8 +55,8 @@ if __name__ == '__main__':
                                     'value2': 1, 'condition2': 'delay=1', 'cycles': 50}], cmd_label='cmd')
 
   path_mot=[]
-  pas=-5
-  for i in range(120, 15, pas):
+  pas=-2
+  for i in range(70, 30, pas):
     path_mot.append({'type': 'Constant',
                       'value': i,
                       'condition': 'delay=5'})

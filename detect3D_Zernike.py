@@ -27,7 +27,7 @@ def detect3D_Zernike (nZ : int,
             Date of the test
         sample : str
             Type of sample (silicone + mesh + resorption)
-        P_graph : int,optional
+        P_graph : int, optional
             State of the sample during the test which will be plotted
 
     Returns:
@@ -39,7 +39,7 @@ def detect3D_Zernike (nZ : int,
             Z Coordinates of the points in the 3d space, for each step of the test
     """
 
-        data_folder = f'./{date}/results_calib/nZ_{nZ}/'
+        data_folder = f'./results_calib/nZ_{nZ}/'
         saving_folder = f'./{date}/{sample}/'
 
         #Dictionnary ot the calibration, with the calibration folders, and the ChAruCo dimensions
@@ -65,7 +65,7 @@ def detect3D_Zernike (nZ : int,
         Lx3d = []
         Ly3d = []
         Lz3d = []
-        Lp = np.load(saving_folder + 'Lp.npy',allow_pickle=True)
+        Lp = np.load(saving_folder + 'Lp2.npy',allow_pickle=True)
         for i in range(len(Lp)):
             Left, Right= Lp[i]
             Z_solution = pcs.Zernike_identification(Left,
@@ -92,9 +92,12 @@ def detect3D_Zernike (nZ : int,
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
+        #ax.set_zlim((20,75))
+        #ax.set_xlim((20,100))
+        #ax.set_ylim((20,100))
         #ax.set_zlim(min(Lz3d[0]), max(Lz3d[0]-Lz3d[P_graph]))
-        my_cmap=plt.get_cmap('hsv')
-        sctt=ax.scatter3D(x,y,z, alpha=0.8, c=z, cmap=my_cmap)
+        my_cmap = plt.get_cmap('viridis')
+        sctt = ax.scatter3D(x,y,z, alpha=0.8, c=z, cmap=my_cmap)
         plt.title('Results')
         fig.colorbar(sctt, ax=ax, shrink=0.5, aspect=5)
         plt.savefig(saving_folder + f'nZ_{nZ}/'+f'Déplacement_{P_graph}-{len(Lx3d)}')
@@ -110,8 +113,8 @@ def detect3D_Zernike (nZ : int,
 
 if __name__ == '__main__' :
 
-    date = '2025_07_01'
-    sample = "SC37_20_P7_30j"
+    date = '2025_07_21'
+    sample = 'Pro_Grip'
     nZ = 12
 
 
