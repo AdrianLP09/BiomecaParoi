@@ -19,7 +19,7 @@ Ouvrir XiCamTool en écrivant :
 ```
 /opt/XIMEA/bin/xiCamTool
 ```
-Une fois la planche ChArUco placée, on peut alors la visualiser sur les deux caméras.
+Une fois la plaque ChArUco placée, on peut alors la visualiser sur les deux caméras.
 
 Dans python, écrire  : 
 ```
@@ -31,12 +31,12 @@ dev.write(b'G0 X0 Y0 Z20\r\n')
 dev.write(b'G0 X0 Y0 Z120\r\n')
 dev.close
 ```
-Cela permet de vérifier que la planche est visible et que les patterns sont nets pour les deux caméras entre 20 et 120mm
+Cela permet de vérifier que la plaque est visible et que les patterns sont nets pour les deux caméras entre 20 et 120mm
 
 
 <p align="center"><img src="images/plancheCHArUco.png" width="450" height="450"></p>
 
-Lancer le script [calib_crappy.py](calib_crappy.py) pour prendre des images de la planche à des hauteurs successives. On visualise les hauteurs auxquelles sont prises les images. On s'assure d'avoir 21 images dans chaque dossier, et on supprime les meta-données.
+Lancer le script [calib_crappy.py](calib_crappy.py) pour prendre des images de la plaque à des hauteurs successives. On visualise les hauteurs auxquelles sont prises les images. On s'assure d'avoir 21 images dans chaque dossier, et on supprime les meta-données.
 Avec le script
 
 ```
@@ -107,9 +107,10 @@ Remarques :
 - Veiller à garder cohérents la date, le nom l'échantillon, et le degré du polynôme entre chaque script.
 - Il est possible d'ajuster les tailles minimales et maximales des points à détecter dans CoordCam
 - Il est nécessaire d'ajuster manuellement l'appariement dans [CoordCam.py](CoordCam.py). Pour cela on se sert de matchTemplate de la bibliothèque [opencv](https://github.com/opencv/opencv) pour obtenir le décalage entre les images de gauche et de droite. On utilise ensuite le *linking* via [trackpy](https://github.com/soft-matter/trackpy) pour récupérer la correspondance entre les points des déux caméras. Cette méthode n'est pas idéale, car elle ne prend pas en compte le changement de perspective, mais l'erreur est négligeable si l'angle d'orientation des caméras est faible.
-- Dans [CoordCam.py](CoordCam.py), on doit rentrer manuellement les coordonnées d'origine de `Template_L` à partir des valeurs indiquées dans **GIMP**, et les modifier si beosin. Il peut également être nécessaire de modifier le paramètre `search_range` de la fonction `link_df_iter` trackpy.
+- Dans [CoordCam.py](CoordCam.py), on doit rentrer manuellement les coordonnées d'origine de `Template_L` à partir des valeurs indiquées dans **GIMP**, et les modifier si besoin. Il peut également être nécessaire de modifier le paramètre `search_range` de la fonction `link_df_iter` trackpy.
 
 ### Post-traitement et récupération des caractéristiques mécaniques
 
-Lancer les scripts [getdef.py](getdef.py), [getaniso.py](getaniso.py) et [getuzpress.py](getuzpress.py) pour obtenir respectivement les champs de déformations, la caractérisation de l'anisotropie de l'échantillon, et la courbe pression/UzMax.
-Une fois les données et caractéristiques mécaniques récupérées, effectuer les comparaisons entre les différents échantillons.
+Lancer les scripts [getdef.py](getdef.py), [getaniso.py](getaniso.py) et [getuzpress.py](getuzpress.py) pour obtenir respectivement les champs de déformations, la caractérisation de l'anisotropie de l'échantillon, et la courbe pression/UzMax. Une fois les données et caractéristiques mécaniques récupérées, effectuer les comparaisons entre les différents échantillons.
+Afin d'afficher les résultats d'anisotropie et de rigidité en même temps, reprendre les scripts [Comparaniso.py](Comparaniso.py) et [Comparuzpress.py](Comparuzpress.py). Pour afficher plusieurs dômes d'un coup avec la même méthode d'interpolation, reprendre [ComparDomes.py](ComparDomes.py). (**Scripts non commentés et peu pratiques d'utilisation, à améliorer**)
+
