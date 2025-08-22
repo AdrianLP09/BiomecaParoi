@@ -92,9 +92,9 @@ def detect3D_Soloff (spform : int,
       #plt.savefig(saving_folder + f'Spform_{spform}/'+f'Déplacement_{P_graph}-{len(Lx3d)}')
       plt.show()
 
-      np.savetxt(saving_folder + f'Spform_{spform}/X3d.txt', Lx3d)
-      np.savetxt(saving_folder + f'Spform_{spform}/Y3d.txt', Ly3d)
-      np.savetxt(saving_folder + f'Spform_{spform}/Z3d.txt', Lz3d)
+      #np.savetxt(saving_folder + f'Spform_{spform}/X3d.txt', Lx3d)
+      #np.savetxt(saving_folder + f'Spform_{spform}/Y3d.txt', Ly3d)
+      #np.savetxt(saving_folder + f'Spform_{spform}/Z3d.txt', Lz3d)
 
       return Lx3d, Ly3d, Lz3d
 
@@ -105,6 +105,6 @@ if __name__ == '__main__' :
   sample = 'Pro_Grip'
   spform = 555
 
-  Lx3d, Ly3d, Lz3d = detect3D_Soloff(spform, date, sample, -1)
+  Lx3d, Ly3d, Lz3d = detect3D_Soloff(spform, date, sample, 0)
 
 
