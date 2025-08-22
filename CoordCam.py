@@ -78,8 +78,8 @@ def CoordCam(pathL=str, pathR=str, maskL=str, maskR=str, savefileL=str, savefile
         '''
         Réorganise les coordonnées des premières images de droite et de gauche
         '''
-        A_allp = np.zeros((2,len(all_pyl),2))
-        for j in range(len(all_pyl)):
+        A_allp = np.zeros((2,len(all_pyr),2))
+        for j in range(len(all_pyr)):
             A_allp[0][j][0] = all_pyl[j]
             A_allp[0][j][1] = all_pxl[j]
             A_allp[1][j][0] = all_pyr[j]
@@ -370,8 +370,8 @@ X,Y = CoordCam(saving_folder+'video_extenso_left/',
                saving_folder+'ROI_left/',
                saving_folder+'ROI_right/',
                (991,1113))
-print(len(X),len(X[0]))
+print(len(X),len(X[0]),len(Y))
 
 
 Lp = f(X[0], Y[0], X[1], Y[1])
-np.save(saving_folder + 'Lp.npy',Lp)
+np.save(saving_folder + 'NewCoordCam/Lp.npy',Lp)
